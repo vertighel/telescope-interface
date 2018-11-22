@@ -1,0 +1,100 @@
+{
+ 
+    "observation": {	
+	"label": "extrasolar template",
+	"objects": [
+	    {
+		"field": {
+		    "name":"Kelt-1",
+		    "ra":"00 00 00.0",
+		    "dec":"+00 00 00",
+		    "epoch":2000.0,
+		    "offset": {"ra":0,"dec":0,}
+		},
+		"exposures": [
+		    {"binning":1, :"R", "exptime": 10.0},
+		],
+		"frame": {"x0":1, :"y0":1, "width":123, "heigth":456}
+	    }
+	],
+	"repeat": 200,
+	"description": "Observation of an extrasolar planet in one filter: repeating for 200 times."
+    },
+
+    
+    "observation": {	
+	"label": "globular template",
+	"objects": [
+	    {
+		"field": {
+		    "name":"47 Tuc",
+		    "ra":"00 00 00.0",
+		    "dec":"+00 00 00",
+		    "epoch":2000.0,
+		    "offset": {"ra":0,"dec":0,}
+		},
+		"exposures": [
+		    {"binning":1, :"V", "exptime": 20.0 },
+		    {"binning":1, :"R", "exptime": 10.0 },
+		    {"binning":1, :"I", "exptime": 10.0 }
+		],
+		"frame": {"x0":1, :"y0":1, "width":123, "heigth":456}
+	    }
+	],
+	"repeat": 30,
+	"description": "Observation of a globular cluster: pointing one field, alternating three filters, repeating this for 30 times."
+    },
+
+    
+    "observation": {	
+	"label": "microlensing template",
+	"objects": [
+	    {
+		"field": {
+		    "name":"MOA-2009-BLG-387",
+		    "ra":"00 00 00.0",
+		    "dec":"+00 00 00",
+		    "epoch":2000.0,
+		    "offset": {"ra":0,"dec":0,}
+		},
+		"exposures": [
+		    {"binning":1, :"R", "exptime": 10.0 },
+		],
+		"frame": {"x0":1, :"y0":1, "width":123, "heigth":456}
+	    },
+	    {
+		"field":
+		{
+		    "name":"MOA-2009-BLG-387",
+		    "ra":"00 00 00.0",
+		    "dec":"+00 00 00",
+		    "epoch":2000.0,
+		    "offset": {"ra":0,"dec":0,}
+		},
+		"exposures": [
+		    {"binning":1, :"R", "exptime": 20.0 },
+		],
+		"frame": {"x0":1, :"y0":1, "width":123, "heigth":456}
+	    },
+	    {
+		"field":
+		{
+		    "name":"OGLE-2006-BLG-109",
+		    "ra":"00 00 00.0",
+		    "dec":"+00 00 00",
+		    "epoch":2000.0,
+		    "offset": {"ra":0,"dec":0,}
+		},
+		"exposures": [
+		    {"binning":1, :"I", "exptime": 10.0 }
+		],
+		"frame": {"x0":1, :"y0":1, "width":123, "heigth":456}
+	    }
+	],
+	"repeat": 30,
+	"description": "Alternating three objects, each one with its exposure parameters"
+	},
+
+
+    
+}

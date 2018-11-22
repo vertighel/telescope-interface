@@ -1,0 +1,16 @@
+{
+  "name": "ant-image-slider",
+  "version": "0.0.1",
+  "description": "image slider ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Davide Ricci",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^4.0.0-alpha.6",
+    "jquery": "^3.2.1",
+    "popper.js": "^1.12.9"
+  }
+}

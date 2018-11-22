@@ -1,0 +1,170 @@
+<!doctype html>
+
+<title>Camera Interface</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- bootstrap.css, jquery, popper, bootstrap.js -->
+<link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+<script src="./node_modules/jquery/dist/jquery.min.js"></script>
+<script src="./node_modules/popper.js/dist/umd/popper.min.js"></script>
+<script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<!-- d3 -->
+<script src="./node_modules/d3/build/d3.min.js"></script>
+
+<!-- (this) jallsky -->
+
+<style>
+  /* Generated using sass --watch style.scss:style.css */
+  @import url("./style.css");
+</style>
+
+<body lang="en">
+
+  <main class="container-fluid row">
+
+      <section id="input-parameters">
+        <hgroup>
+          <h2>input parameters</h2>
+          <h3></h3>
+        </hgroup>
+
+        <form>
+
+          <div>
+            <label for="imagetyp">Type</label>
+            <div>
+              <select id="imagetyp" name="imagetyp">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+                <option value="bias">Bias</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label for="exptime">Exptime</label>
+            <div>
+              <input type="number" value="0.01" min="0.001" max="600"
+                     step="0.001" id="exptime" name="exptime">
+            </div>
+          </div>
+
+          <div>
+            <label for="nexp">N. exp</label>
+            <div>
+              <input type="number" value="1" min="1" max="300"
+                     step="1" id="nexp" name="nexp">
+            </div>
+          </div>
+
+          <div>
+            <label for="binning">Binning</label>
+            <div>
+              <input type="number" value="1" min="1" max="4"
+                     step="1" id="binning" name="binning">
+            </div>
+          </div>
+
+          <div>
+            <label for="frametyp">Frame</label>
+            <div>
+              <select id="frametyp" name="frametyp" >
+                <option value="full">Full</option>
+                <option value="crop">Crop</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+          </div>
+          
+          <div>
+            <span>Start X,Y</span>
+            <label for="x_start" class="sr-only">x</label>
+            <div class="col-md-4">
+              <input type="number" value="260"  min="0" max="639"
+                     step="1" id="x_start" name="x_start" disabled>
+            </div>
+
+            <label for="y_start" class="sr-only">Y</label>
+            <div class="col-md-4">
+              <input type="number" value="180" min="0" max="479"
+                     step="1" id="y_start" name="y_start" disabled>
+            </div>
+          </div>
+
+          <div>
+            <span>Size X,Y</span>
+            <label for="x_size" class="sr-only">x</label>
+            <div class="col-md-4">
+              <input type="number" value="120"  min="1" max="127"
+                     step="1" id="x_size" name="x_size" disabled>
+            </div>
+
+            <label for="y_size" class="sr-only">Y</label>
+            <div class="col-md-4">
+              <input type="number" value="130" min="2" max="127"
+                     step="1" id="y_size" name="y_size" disabled>
+            </div>
+          </div>
+          
+          <div>
+            <label><span id="iteration">0</span>/<span id="total_exp">1</span></label>
+            <div class="col-md-4">
+              <button type="button" class="btn-primary" id="start">Expose</button>
+            </div>
+            <div class="col-md-4">
+              <button type="button" class="btn-secondary" id="abort">Abort</button>
+            </div>
+
+          </div>
+
+          <div>
+            <label><span id="total_auto_exp">0</span></label>
+            <div class="col-md-4">
+              <button type="button" class="btn-primary" id="video">Video</button>
+            </div>
+            <div class="col-md-4">
+              <button type="button" class="btn-secondary" id="stop">Stop</button>
+            </div>
+
+          </div>
+
+        </form>
+
+        <script>
+        
+        $("#imagetyp").change(function(){ // var ifdark = this.value == "dark"
+            // $("#exptime").prop("disabled",ifdark)
+        
+            var ifcust = $("#frametyp").prop("value")  == "custom"
+            var ifbias = this.value == "bias"
+        
+            $("#exptime").prop("disabled",ifbias)
+            $("#x_size,#y_size,#x_start,#y_start").prop("disabled",iftwo)
+        
+        })        
+        
+        $("#frametyp").change(function(){
+                var bool=this.value != "custom"
+                $("#x_size,#y_size,#x_start,#y_start").prop("disabled",bool)        
+        })
+        
+        $("#x_size,#y_size").change(function(){
+            var s=this.value
+            var xmax=640-s
+            var ymax=480-s
+            $("#x_start").prop("max",xmax)
+            $("#y_start").prop("max",ymax)
+        
+            var xval=parseInt($("#x_start").prop("value"))
+            var yval=parseInt($("#y_start").prop("value"))
+            if (xval > xmax) $("#x_start").prop("value",xmax)
+            if (yval > ymax) $("#y_start").prop("value",ymax)
+        })
+
+        </script>
+
+      </section>
+
+  </main>
