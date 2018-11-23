@@ -1,5 +1,5 @@
 
-<section class="col-4">
+<section class="col-3">
 
   <h2>Camera control</h2>
 
@@ -26,7 +26,7 @@
       <select id="frametyp" name="frametyp" class="form-control">
         <option value="full">Full</option>
         <option value="crop">Crop</option>
-        <option value="custom">Custom</option>
+        <option value="custom" selected>Custom</option>
       </select>
       <small class="text-muted"><var>1024</var>×<var>1024</var></small>
     </div>
@@ -82,17 +82,11 @@
     <label for="imagetyp" class="col-form-label col-2">Type</label>
     <div class="col input-group">
       <select id="imagetyp" name="imagetyp" class="form-control">
-        <option value="light">Science</option>
+        <option value="science">Science</option>
         <option value="flat">Flat</option>
         <option value="dark">Dark</option>
         <option value="bias">Bias</option>
       </select>
-      <div class="input-group-append">
-        <div class="input-group-text">
-          <input type="checkbox">
-          Fast
-        </div>
-      </div>
     </div>
   </div>
 
@@ -111,27 +105,18 @@
     </div>
   </div>
 
-  <div class="form-group row">
-    <label for="object" class="col-form-label col-2">Filter</label>
-    <div class="btn-group btn-group-toggle col" data-toggle="buttons">
-      <label class="btn btn-outline-secondary col">
-        <input type="radio" name="options" id="option1" autocomplete="off"> U
-      </label>
-      <label class="btn btn-outline-secondary col">
-        <input type="radio" name="options" id="option2" autocomplete="off"> B
-      </label>
-      <label class="btn btn-outline-secondary col">
-        <input type="radio" name="options" id="option3" autocomplete="off"> V
-      </label>
-      <label class="btn btn-outline-secondary col active">
-        <input type="radio" name="options" id="option4" autocomplete="off" checked> R
-      </label>
-      <label class="btn btn-outline-secondary col">
-        <input type="radio" name="options" id="option5" autocomplete="off"> I
-      </label>
+
+  <div class="form-group row filter">
+    <label for="filter" class="col-form-label col-2">Filter</label>
+    <div class="btn-group col" role="group" aria-label="First group">
+      <button type="button" class="btn btn-outline-primary col">U</button>
+      <button type="button" class="btn btn-outline-primary col">B</button>
+      <button type="button" class="btn btn-outline-primary col">V</button>
+      <button type="button" class="btn btn-outline-primary col">R</button>
+      <button type="button" class="btn btn-outline-primary col">I</button>
     </div>
   </div>
-
+  
   <div class="form-group row">
     <label for="object" class="col-form-label col-2">Object</label>
     <div class="col">
@@ -161,6 +146,27 @@
       </label>
     </div>
   </div>
+
+  <!-- <div class="form-group row"> -->
+  <!--   <label for="filter" class="col-form-label col-2">Filter</label> -->
+  <!--   <div class="btn-group btn-group-toggle col" data-toggle="buttons"> -->
+  <!--     <label class="btn btn-outline-secondary col"> -->
+  <!--       <input type="radio" name="filter" id="filter1" autocomplete="off"> U -->
+  <!--     </label> -->
+  <!--     <label class="btn btn-outline-secondary col"> -->
+  <!--       <input type="radio" name="filter" id="filter2" autocomplete="off"> B -->
+  <!--     </label> -->
+  <!--     <label class="btn btn-outline-secondary col"> -->
+  <!--       <input type="radio" name="filter" id="filter3" autocomplete="off"> V -->
+  <!--     </label> -->
+  <!--     <label class="btn btn-outline-secondary col active"> -->
+  <!--       <input type="radio" name="filter" id="filter4" autocomplete="off" checked> R -->
+  <!--     </label> -->
+  <!--     <label class="btn btn-outline-secondary col"> -->
+  <!--       <input type="radio" name="filter" id="filter5" autocomplete="off"> I -->
+  <!--     </label> -->
+  <!--   </div> -->
+  <!-- </div> -->
 
   <!-- <div class="form-group row"> -->
   <!--   <span class="col-form-label col-4">Start X,Y</span> -->
@@ -268,3 +274,23 @@
   <!-- </div> -->
 
 </section>
+
+
+  <script>
+
+  $(document).ready(function(){
+
+      $("#imagetyp").change(function(){
+          var ifBias = (this.value == "bias");
+          $("#exptime,.filter button").prop("disabled",ifBias)          
+      });
+
+      $("#frametyp").change(function(){
+          var ifCustom=this.value == "custom"
+	  $("#x0,#y0,#xf,#yf").prop("disabled",!ifCustom)
+      });
+
+    
+  });
+    
+  </script>
