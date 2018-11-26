@@ -25,12 +25,43 @@
 
 <body>
 
-<section class="col-6">
 
-  <h4>Camera</h4>
+<section>
+
+<form class="row">
   
-  <x-widget data-class="camera-ccd"></x-widget>
-  <x-widget data-class="camera-object"></x-widget>
-  <x-widget data-class="camera-controls"></x-widget>
+  <div class="col">  
+    <h4>Camera</h4>
+    <x-widget data-class="camera-ccd"></x-widget>
+  </div>
+  <div class="col">  
+    <h4>Object</h4>
+    <x-widget data-class="camera-object"></x-widget>
+  </div>
+  <div class="col">  
+    <h4>Control</h4>
+    <x-widget data-class="camera-controls"></x-widget>
+  </div>
+
+<button>asasdd</button>
+</form>
+
+<script>
+
+  $(document).ready(function(){
+
+      // $("label").click(function(){
+      //     console.log("asd1")
+          $("form").submit(function(e){
+              console.log("asd2")             
+              e.preventDefault();
+              console.log($(this).serializeArray())
+          });
+      // });
+      
+  });
+
+</script>
+
 
 </section>

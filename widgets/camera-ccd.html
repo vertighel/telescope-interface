@@ -9,7 +9,8 @@
           <input type="checkbox"  class="custom-control-checkbox" aria-label="Activate">
         </div>
       </div>
-      <input class="form-control" type="number" id="temperature" value="-20" max="0">
+      <input class="form-control" type="number"  name="temperature"
+             id="temperature" value="-15.0" min="-20.0" max="0.0" step="0.1">
       <div class="input-group-append">
         <span class="input-group-text">°C</span>
         <var class="input-group-text">-18.1</var>
@@ -28,7 +29,7 @@
     </div>
     <label for="binning" class="col-2 col-form-label">Binning</label>
     <div class="col">
-      <select class="custom-select form-control" id="binning">
+      <select class="custom-select form-control" id="binning"  name="binning">
         <option value="1">1×1</option>
         <option value="2" selected>2×2</option>
         <option value="3">3×3</option>
@@ -40,15 +41,15 @@
     <label for="x0" class="col-1 col-form-label">X<sub>0</sub></label>
     <label for="y0" class="col-1 col-form-label">Y<sub>0</sub></label>
     <div class="col input-group input-group-sm">
-      <input class="form-control" type="number"
-             id="x0" value="123" max="1">
+      <input class="form-control" type="number" name="x0"
+             id="x0" value="123" min="1" max="1024" step="1">
       <div class="input-group-append">
         <span class="input-group-text">px</span>
       </div>
     </div>
     <div class="col input-group input-group-sm">
-      <input class="form-control" type="number"
-             id="y0" value="456" max="1">
+      <input class="form-control" type="number" name="y0"
+             id="y0" value="456" min="2" max="1024" step="1">
       <div class="input-group-append">
         <span class="input-group-text">px</span>
       </div>
@@ -56,18 +57,18 @@
   </div>
 
   <div class="row">
-    <label for="xf" class="col-1 col-form-label">Y<sub>f</sub></label>
+    <label for="xf" class="col-1 col-form-label">X<sub>f</sub></label>
     <label for="yf" class="col-1 col-form-label">Y<sub>f</sub></label>
     <div class="col input-group input-group-sm">
-      <input class="form-control" type="number"
-             id="xf" value="123" min="0">
+      <input class="form-control" type="number" name="xf"
+             id="xf" value="123" min="1" max="1024" step="1">
       <div class="input-group-append">
         <span class="input-group-text">px</span>
       </div>
     </div>
     <div class="col input-group input-group-sm">
-      <input class="form-control" type="number"
-             id="yf" value="456" min="2">
+      <input class="form-control" type="number" name="y0"
+             id="yf" value="456" min="2" max="1024" step="1">
       <div class="input-group-append">
         <span class="input-group-text">px</span>
       </div>
