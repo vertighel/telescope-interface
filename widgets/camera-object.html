@@ -4,7 +4,7 @@
   <div class="mb-2 row">
     <label for="imagetyp" class="col-form-label col-2">Type</label>
     <div class="col input-group">
-      <select id="imagetyp" name="imagetyp" class="form-control">
+      <select data-var="imagetype" id="imagetyp" name="imagetyp" class="form-control">
         <option value="science">Science</option>
         <option value="flat">Flat</option>
         <option value="dark">Dark</option>
@@ -16,14 +16,14 @@
   <div class="mb-2 row">
     <label class="col-2 col-form-label" for="exptime" >Expose</label>
     <div class="col-5 input-group">
-      <input class="form-control" type="number" id="exptime" value="120">
+      <input data-var="exptime" class="form-control" type="number" id="exptime" value="120">
       <div class="input-group-append">
         <span class="input-group-text">s</span>
       </div>
     </div>
     <label for="repeat" class="col-2 col-form-label">Repeat</label>
     <div class="col">
-      <input class="form-control" type="number" id="repeat" value="1" min="1" max="300">
+      <input data-var="nexpo" class="form-control" type="number" id="repeat" value="1" min="1" max="300">
       <!-- <span class="input-group-addon">#</span> -->
     </div>
   </div>
@@ -42,7 +42,7 @@
   <div class="mb-2 row">
     <label for="object" class="col-form-label col-2">Object</label>
     <div class="col">
-      <input type="text" placeholder="Test" id="object"
+      <input data-var="object" type="text" placeholder="Test" id="object"
              name="object" class="form-control" value="Test">
     </div>
   </div>
@@ -50,27 +50,35 @@
 </fieldset>
 
 <script class="builder">
+ var co=this;
+ 
+ $(document).ready(function(){
 
-  $(document).ready(function(){
-
-      $("#imagetyp").change(function(){
-
-          var ifBias = (this.value == "bias");
-          var ifDark = (this.value == "dark");
-
-          $("#exptime").prop("disabled",ifBias)
-          $(".filter button").prop("disabled", ifBias || ifDark);
-
-      });
-
-      $(".filter button").click(function(){
-       $(this)
+     $(co.imagetype).change(function(){
+	 console.log("change");
+         var ifBias = (this.value == "bias");
+         var ifDark = (this.value == "dark");
+	 
+         $(co.exptime).prop("disabled",ifBias)
+         $(".filter button").prop("disabled", ifBias || ifDark);
+	 
+     });
+     
+     $(".filter button").click(function(){
+	 $(this)
               .addClass("btn-primary").removeClass("btn-outline-primary")
               .siblings()
               .removeClass("btn-primary").addClass("btn-outline-primary");
+	 
+     });
 
-      });
-
-  });
+     co.get_params=function(){
+	 return {
+	     imagetype : co.imagetype.value,
+	     exptime : co.exptime.value
+	 };
+     }
+     
+ });
 
 </script>
