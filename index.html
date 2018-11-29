@@ -9,7 +9,7 @@
 <script src="./node_modules/jquery/dist/jquery.min.js"></script>
 <script src="./node_modules/popper.js/dist/umd/popper.min.js"></script>
 <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-  
+
 <!-- Widget Engine -->
 <script src="./node_modules/widget_engine/lib/js/xhr.js"></script>
 <script src="./node_modules/widget_engine/lib/js/widget_engine.js"></script>
@@ -24,24 +24,33 @@
 </style>
 
 <body>
-
-<form class="col-4">
   
-  <div class="">  
-    <h4>Camera</h4>
-    <x-widget data-class="camera-ccd"></x-widget>
-  </div>
-  <div class="">  
-    <h4>Object</h4>
-    <x-widget data-class="camera-object"></x-widget>
+<section class="row">
+
+  <form class="col-4">
+
+    <div class="">
+      <h4>Camera</h4>
+      <x-widget data-class="camera-ccd"></x-widget>
+    </div>
+    <div class="">
+      <h4>Object</h4>
+      <x-widget data-class="camera-object"></x-widget>
+    </div>
+    
+    <div class="">
+      <h4>Control</h4>
+      <x-widget data-class="camera-controls"></x-widget>
+    </div>
+    
+  </form>
+
+  <div class="col-4">
+    <h4>Table test</h4>
+    <x-widget data-class="table"></x-widget>
   </div>
 
-  <div class="">  
-    <h4>Control</h4>
-    <x-widget data-class="camera-controls"></x-widget>
-  </div>
-
-</form>
+</section>
 
 <script>
 
@@ -50,11 +59,10 @@
           e.preventDefault();
           var formData = $(this).serializeArray();
           // var button = $('button[clicked="true"]')
-          // formData.push({ name: button.prop("name"), value: button.prop("value") })          
+          // formData.push({ name: button.prop("name"), value: button.prop("value") })
           // console.log(button)
           console.log(formData)
-          
+
       });
 
 </script>
-
