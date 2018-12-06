@@ -20,30 +20,26 @@ tabulate(d,c)
 /// D3 devi morire
 function tabulate(data, columns){
 
-    var table = d3.select('table')
-    var thead = d3.select('thead')
+    var table = d3.select('table');
+    var thead = d3.select('thead');
     var tbody = d3.select('tbody');
-    
-    // Header
-    thead.attr('scope','col')
+    thead.attr('scope','col');
 
-    var th =thead.selectAll('th').data(columns)
-    
-    th.exit().remove()
+    // Header
+    var th =thead.selectAll('th').data(columns);
+    th.exit().remove();
     th.enter()
         .append("th")
         .merge(th)
-        .text(function(d){return d })
+        .text(function(d){return d });
 
     // Rows
-    var rows =tbody.selectAll('tr').data(data)
-    
-    rows.exit().remove()
+    var rows =tbody.selectAll('tr').data(data);
+    rows.exit().remove();
     rows.enter()
         .append('tr')
         .merge(rows)
-        .attr('data-row', function(d,i){return i })
-        .attr('href',function(d){return d.snippet })
+        .attr('data-row', function(d,i){return i });
 
     // Cells
     var cells = tbody.selectAll('tr')
@@ -53,25 +49,18 @@ function tabulate(data, columns){
             return columns.map(function (column) {
                 return {column: column, value: row[column]};
             });
-        })
+        });
 
-    cells.exit().remove()
+    cells.exit().remove();
     cells.enter()
         .append("td")
         .merge(cells)
         .attr('data-col',function(d,i){return i })
         .attr('data-key',function(d,i){return d.column })
-        .text(function(d,i){return d.value })
-        // .filter(function(d,i) { return d.column===link })
-        // .text("")
-        // .append("a")
-        // .attr("href", function(d,i) {
-        //     return d.value
-        // })
-        // .text( " link" );
-    
-    return table;    
+        .text(function(d,i){return d.value });
+
+    return table;
 }
 
-  
+
 </script>
