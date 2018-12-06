@@ -1,0 +1,19 @@
+<!doctype html>
+<title>test</title>
+<meta charset="utf-8">
+<script src="../node_modules/jquery/dist/jquery.min.js"></script>
+<body>
+
+<form>
+  <button type="submit" name="launch" value="one">one</button>
+  <button type="submit" name="launch" value="two">two</button>
+</form>
+
+<script>
+      $("form").on('submit', function(e){
+          console.log("asd2")             
+          e.preventDefault();
+          console.log($("form").serializeArray())
+      });      
+</script>
+
