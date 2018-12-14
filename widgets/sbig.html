@@ -1,0 +1,122 @@
+
+
+<style>
+ .sb_top{
+     display: flex;
+     flex-direction: column;
+     margin-left: 5em;
+     margin-right: 5em;
+ }
+ .sb_container{
+     background-color: rgba(10,10,10,.5);
+     flex: 0 1 auto;
+ }
+ .sb_title{
+     flex: 0 1 auto;
+     color: #bbb;
+ }
+
+ .sb_server{
+     flex: 0 1 auto;
+     color: #bbb;
+     text-align: right;
+ }
+
+ .sb_camera_info{
+     background: rgba(255,255,255,0.4);
+ }
+
+ /*
+ .form-control{
+     border: 1px solid white;
+ }
+ .input-group-text{
+     border: 1px solid white;
+ }
+ */
+ 
+</style>
+
+<div class=sb_top>
+    <div class="row">
+	<h1 class="sb_title col-6">Camera controller  </h1>
+
+	
+	<div class="sb_server col-6">
+	    Connection to the telescope's computer :<x-widget name="ws" data-class="websocket"></x-widget>
+	</div>
+	
+
+    </div>
+
+    <div class="sb_container text-light">
+    </div>
+
+    <div data-var="ci" class="sb_camera_info">
+    </div>
+	
+    </div>
+</div>
+
+<script class="builder">
+
+
+ var sb=this;
+ 
+ 
+ var sbig_handlers = {
+     broadcast : function(msg, reply){
+	 console.log("BCAST");
+     }
+ };
+ 
+ 
+ var sock=sm.new_socket({ mod_pack : sbig_handlers, mod_pack_name : "sbig"});
+ sb.childs.ws.attach_client(sock);
+
+ function update_cam_list(){
+     sock.query("sbig/cam_info",function(msg){
+	 //sb.ci.innerHTML="<pre>"+JSON.stringify(msg.data,null,5)+"</pre>";
+	 
+
+	     
+	 var n=0;
+	 for ( var c in msg.data ){
+	     n++;
+             let cam=msg.data[c];
+	     factory.create_widget("ti/sbig_camera", sb, sb.ci, "cam"+cam.id).then(function(cam_widget){
+		 cam_widget.cam.init(sock,cam);
+		 if(cam.uid!==undefined){
+		     cam_widget.cam.owner=cam.uid==sm.id_data.session;
+		     cam_widget.cam.locked=true;
+		 }else cam_widget.cam.locked=false;
+		 cam_widget.update_button();
+	     });
+         }
+	 if(n==0){
+	     sb.ci.innerHTML="<strong class='text-warning'>No SBIG USB camera found!</strong>";
+	 }
+     });
+     
+
+ }
+ 
+ sock.on("event",function(evt){
+     if(evt.status=="opened"){
+	 update_cam_list()
+	 
+	 sock.query("system/set_broadcast_stations", { sbig : true} , function(reply){});
+     };
+ });
+ 
+ sock.mods.install_mod("system",{
+     broadcast : function(msg, reply){
+	 console.log("Broadcast message " + JSON.stringify(msg.data) );
+     }
+ });
+ 
+ sock.connect().catch(function(error){
+     
+ });
+     
+</script>
