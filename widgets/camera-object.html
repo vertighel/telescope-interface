@@ -16,29 +16,52 @@
   <div class="mb-2 row">
     <label class="col-2 col-form-label" for="exptime" >Expose</label>
     <div class="col-5 input-group">
-      <input data-var="exptime" class="form-control" type="number" id="exptime" value="120">
+
+      <input data-var="exptime" class="form-control" type="number" name="exptime" id="exptime" value="120">
       <div class="input-group-append">
         <span class="input-group-text">s</span>
       </div>
     </div>
     <label for="repeat" class="col-2 col-form-label">Repeat</label>
     <div class="col">
-      <input data-var="nexpo" class="form-control" type="number" id="repeat" value="1" min="1" max="300">
+      <input data-var="nexpo" class="form-control" type="number" name="repeat" id="repeat" value="1" min="1" max="300">
       <!-- <span class="input-group-addon">#</span> -->
     </div>
   </div>
 
+  <!-- <div class="mb-2 row"> -->
+  <!--   <span class="col-form-label col-2">Filter</span> -->
+  <!--   <div class="btn-group col filter" role="group" aria-label="First group"> -->
+  <!--     <button type="button" class="btn btn-outline-primary col">U</button> -->
+  <!--     <button type="button" class="btn btn-outline-primary col">B</button> -->
+  <!--     <button type="button" class="btn btn-outline-primary col">V</button> -->
+  <!--     <button type="button" class="btn btn-outline-primary col">R</button> -->
+  <!--     <button type="button" class="btn btn-outline-primary col">I</button> -->
+  <!--   </div> -->
+  <!-- </div> -->
+  
   <div class="mb-2 row">
     <span class="col-form-label col-2">Filter</span>
-    <div class="btn-group col filter" role="group" aria-label="First group">
-      <button type="button" class="btn btn-outline-primary col">U</button>
-      <button type="button" class="btn btn-outline-primary col">B</button>
-      <button type="button" class="btn btn-outline-primary col">V</button>
-      <button type="button" class="btn btn-outline-primary col">R</button>
-      <button type="button" class="btn btn-outline-primary col">I</button>
+    <div class="btn-group btn-group-toggle col filter" data-toggle="buttons">
+      <label class="btn btn-outline-secondary btn-sm col">
+        <input type="radio" name="filter" id="filter1" value="U" autocomplete="off"> U
+      </label>
+      <label class="btn btn-outline-secondary btn-sm col">
+        <input type="radio" name="filter" id="filter2" value="B" autocomplete="off"> B
+      </label>
+      <label class="btn btn-outline-secondary btn-sm col">
+        <input type="radio" name="filter" id="filter3" value="V" autocomplete="off"> V
+      </label>
+      <label class="btn btn-outline-secondary btn-sm col focus active">
+        <input type="radio" name="filter" id="filter4" value="R" autocomplete="off" checked> R
+      </label>
+      <label class="btn btn-outline-secondary btn-sm col">
+        <input type="radio" name="filter" id="filter5" value="I" autocomplete="off"> I
+      </label>
     </div>
   </div>
 
+  
   <div class="mb-2 row">
     <label for="object" class="col-form-label col-2">Object</label>
     <div class="col">
@@ -50,6 +73,7 @@
 </fieldset>
 
 <script class="builder">
+
  var co=this;
  
  $(document).ready(function(){
@@ -80,5 +104,5 @@
      }
      
  });
-
+ 
 </script>
