@@ -37,28 +37,28 @@
       <h4>Object</h4>
       <x-widget data-class="camera-object"></x-widget>
     </div>
-
+    
     <div class="">
       <h4>Control</h4>
       <x-widget data-class="camera-controls"></x-widget>
     </div>
-
+    
   </form>
-
+  
   <div class="col-4">
     <h4>Table test</h4>
     <x-widget data-class="table"></x-widget>
   </div>
-
+  
   <div class="col-4">
     <h4>Mini-graph</h4>
     <x-widget data-class="simple-line"></x-widget>
   </div>
-
+  
 </section>
 
 <script>
-
+  
       $("form").on("submit", function(e){
           e.preventDefault();
           var formData = $(this).serializeArray();

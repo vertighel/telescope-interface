@@ -1,3 +1,4 @@
+
 <style>
 
 .line {
@@ -6,61 +7,70 @@
   stroke-width: 1.2px;
 }
 
+.area {
+  fill: lightsteelblue;
+}
+
 </style>
 
-<svg width="370" height="300"></svg>
+<svg width="160" height="130"></svg>
 
 <button id="createNewPoint" class="btn btn-secondary">point</button>
 
 <script>
 
-// test function to create points
+/// test function to create points
 $("#createNewPoint").on("click",function(){
     var newdatum = {x:new Date(), y:Math.random()};
-    update(newdatum)    
+    update(newdatum);    
 });
 
-var n = 10; // Max number of data points in the chart
+var n = 10; /// Max number of data points in the chart
 var data = [];
 
 var svg = d3.select("svg"),
-    margin = {top: 20, right: 20, bottom: 20, left: 40},
+    margin = {top: 2, right: 2, bottom: 2, left: 4},
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom,
-    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 var x = d3.scaleTime()
     .range([0, width])
-    .domain([0, 1]) // Just to draw
+        .domain([0, 1]); /// Just to draw
 
 var y = d3.scaleLinear()
     .range([height, 0])
-    .domain([-1, 1]) // Just to draw
+        .domain([-1, 1]); /// Just to draw
 
-var xAxis = d3.axisBottom(x).tickValues(0)
-var yAxis = d3.axisLeft(y).tickValues(0)
+var xAxis = d3.axisBottom(x).tickValues(0);
+var yAxis = d3.axisLeft(y).tickValues(0);
 
+/// Define the line
 var line = d3.line()
     .x(function(d, i) { return x(d.x); })
     .y(function(d, i) { return y(d.y); });
 
-// Clipping what is out of the box
-g.append("defs").append("clipPath")
-    .attr("id", "clip")
-  .append("rect")
-    .attr("width", width)
-    .attr("height", height);
+/// Define the area
+var area = d3.area()
+    .x(function(d) { return x(d.x); })
+    .y0(height) /// Fill from bottom
+    .y1(function(d) { return y(d.y); });
 
-// Drawing the line
+/// Drawing the area
 g.append("g")
-    .attr("clip-path", "url(#clip)")
+  .append("path")
+    .datum(data)
+    .attr("class", "area")
+    .attr("d", area);
+
+/// Drawing the line
+g.append("g")
   .append("path")
     .datum(data)
     .attr("class", "line")
-    .attr("d", line)
-    .attr("transform", null);
+    .attr("d", line);
 
-// Drawing the axes
+/// Drawing the axes
 g.append("g")
     .attr("class", "axis axis--x")
     .attr("transform", "translate(0," + y(0) + ")")
@@ -70,18 +80,18 @@ g.append("g")
     .attr("class", "axis axis--y")
     .call(yAxis);
 
-// Updating data, line and axes
+/// Updating data, line and axes
 function update(newdatum){
-    data.push(newdatum) // Push a new datum in the array.
+    data.push(newdatum); /// Push a new datum in the array.
     
     if (data.length > n){
-        data.shift(); // Pop the old data point off the front.
+        data.shift(); /// Pop the old data point off the front.
     }
     
-    x.domain(d3.extent(data, function(d){return d.x}));
-    y.domain(d3.extent(data, function(d){return d.y}));
+    x.domain(d3.extent(data, function(d){return d.x;}));
+    y.domain(d3.extent(data, function(d){return d.y;}));
     
-    // Update axis and line
+    /// Update axis, line, and area
     d3.select(".axis--x")
         .call(xAxis);
     
@@ -89,8 +99,10 @@ function update(newdatum){
         .call(yAxis);
     
     d3.select(".line")
-        .attr("d", line)
-        .attr("transform", null);
+        .attr("d", line);
+    
+    d3.select(".area")
+        .attr("d", area);
     
 }
 
