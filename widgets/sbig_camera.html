@@ -26,9 +26,9 @@
     <div class="row">
 	<section data-var="controls" class="col-6">
 	    <h3>Controls</h3>
-	    <x-widget data-class="ti/camera-ccd"></x-widget>
-	    <x-widget data-class="ti/camera-object"></x-widget>
-	    <x-widget data-class="ti/camera-controls"></x-widget>
+	    <x-widget name="ccd_settings" data-class="ti/camera-ccd"></x-widget>
+	    <x-widget name="object_settings" data-class="ti/camera-object"></x-widget>
+	    <x-widget name="control_widget" data-class="ti/camera-controls"></x-widget>
 	</section>
 	
 	<section class="col-6 image_panel">
@@ -43,16 +43,35 @@
  sbc.controls.disabled=true;
  
  class sbig_camera{
+     
      constructor(){
 	 this.locked=false;
 	 this.owner=false;
      }
 
      init(sock, info){
+	 var cam=this;
 	 this.sock=sock;
 	 this.info=info;
 	 sbc.title.innerHTML=info.name;
 	 sbc.update_button();
+
+	 this.sock.query("sbig/get_ob_template", function(reply){
+	     cam.ob_template=reply.data;
+	 });
+
+	 
+	 sbc.childs.control_widget.expose.addEventListener("click", function(){
+	     console.log("Expose!");
+	     cam.fill_ob(sbc.cam.ob_template, sbc);
+	     console.log("Filled OB + " + JSON.stringify(cam.ob_template, null, 5));
+	     //sbc.childs.ccd_settings
+	     
+	     cam.sock.query("sbig/submit_ob", cam.ob_template, function(reply){
+		 
+	     });
+	 });
+
      }
      
      use(){
@@ -83,11 +102,43 @@
 			 cam.owner=true;
 			 ok();
 		     }
+
+		     var ob_template;
+		     
 		     
 		 }).catch(fail);
 	     }
 	 });
      }
+
+     fill_ob(template, top_widget){
+	 var cam=this;
+	 for(var tpn in template.objects){
+	     let tp=template.objects[tpn];	     
+	     var widg=
+		 (top_widget.childs!==undefined) ?
+		 top_widget.childs[tpn] : top_widget; 
+
+	     if(tp.objects !== undefined){
+		 cam.fill_ob(tp, widg);
+	     }else{
+		 if(widg[tpn]!==undefined){
+		     var type=widg[tpn].getAttribute("type");
+		     switch(type){
+			 case "checkbox":
+			     tp.value=widg[tpn].checked;
+			     break;
+			 default:
+			     tp.value=widg[tpn].value;
+		     }
+		     
+		 }
+	     }
+	 }
+	 
+     }
+     
+     
  };
  
  
@@ -128,7 +179,7 @@
      });
  });
 
-
+ 
  
  
 </script>
