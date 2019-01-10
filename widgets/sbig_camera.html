@@ -1,0 +1,185 @@
+<style>
+ .image_panel{
+
+     display: flex;
+     flex-direction: column;
+
+ }
+ .image_panel>h3{
+     flex: 0 1 auto;
+ }
+ .sbc_top{
+     padding: 1rem;
+     flex: 1 1 auto;
+ }
+ .sbc_status{
+     font-size:1.3em;
+ }
+</style>
+
+<div class="sbc_top">
+    <h2><span data-var="title"></span>
+	<button data-var="use_camera" class="btn btn-primary">Use camera</button>
+    </h2>
+    <span data-var="status" class="text-strong sbc_status"></span>
+
+    <div class="row">
+	<section data-var="controls" class="col-6">
+	    <h3>Controls</h3>
+	    <x-widget name="ccd_settings" data-class="ti/camera-ccd"></x-widget>
+	    <x-widget name="object_settings" data-class="ti/camera-object"></x-widget>
+	    <x-widget name="control_widget" data-class="ti/camera-controls"></x-widget>
+	</section>
+	
+	<section class="col-6 image_panel">
+	    <h3>Last image : <span data-var="image_name"></span></h3>    
+	    <x-widget name="viewer" data-class="fits_viewer" data-fits-file="lib/fits/ngc6934_v.fits"></x-widget>
+	</section>
+    </div>
+</div>
+
+<script class="builder">
+ var sbc=this;
+ sbc.controls.disabled=true;
+ 
+ class sbig_camera{
+     
+     constructor(){
+	 this.locked=false;
+	 this.owner=false;
+     }
+
+     init(sock, info){
+	 var cam=this;
+	 this.sock=sock;
+	 this.info=info;
+	 sbc.title.innerHTML=info.name;
+	 sbc.update_button();
+
+	 this.sock.query("sbig/get_ob_template", function(reply){
+	     cam.ob_template=reply.data;
+	 });
+
+	 
+	 sbc.childs.control_widget.expose.addEventListener("click", function(){
+	     console.log("Expose!");
+	     cam.fill_ob(sbc.cam.ob_template, sbc);
+	     console.log("Filled OB + " + JSON.stringify(cam.ob_template, null, 5));
+	     //sbc.childs.ccd_settings
+	     
+	     cam.sock.query("sbig/submit_ob", cam.ob_template, function(reply){
+		 
+	     });
+	 });
+
+     }
+     
+     use(){
+	 var cam=this;
+	 return new Promise(function(ok,fail){
+	     if(cam.locked==true){
+		 if(cam.owner==true){
+		     cam.sock.query("sbig/release_camera", { cam_id : cam.info.id },function(reply){ 
+			 if(reply.error!==undefined)
+			     return fail(new Error(reply.error));
+			 else{
+			     cam.locked=false;
+			     cam.owner=false;
+			     return ok();
+			 }
+			     
+		     }).catch(fail);
+		 } else fail(new Error("use: camera locked and you are not the camera owner!"));
+	     
+	     }
+	     else{
+		 cam.sock.query("sbig/use_camera", { cam_id : cam.info.id },function(reply){
+		     
+		     if(reply.error!==undefined)
+			 fail(new Error(reply.error));
+		     else{
+			 cam.locked=true;
+			 cam.owner=true;
+			 ok();
+		     }
+
+		     var ob_template;
+		     
+		     
+		 }).catch(fail);
+	     }
+	 });
+     }
+
+     fill_ob(template, top_widget){
+	 var cam=this;
+	 for(var tpn in template.objects){
+	     let tp=template.objects[tpn];	     
+	     var widg=
+		 (top_widget.childs!==undefined) ?
+		 top_widget.childs[tpn] : top_widget; 
+
+	     if(tp.objects !== undefined){
+		 cam.fill_ob(tp, widg);
+	     }else{
+		 if(widg[tpn]!==undefined){
+		     var type=widg[tpn].getAttribute("type");
+		     switch(type){
+			 case "checkbox":
+			     tp.value=widg[tpn].checked;
+			     break;
+			 default:
+			     tp.value=widg[tpn].value;
+		     }
+		     
+		 }
+	     }
+	 }
+	 
+     }
+     
+     
+ };
+ 
+ 
+ sbc.cam=new sbig_camera();
+ 
+ 
+ sbc.update_button=function(){
+     if(sbc.cam.locked==true){
+	 if(sbc.cam.owner==true){
+	     sbc.status.innerHTML="You can now control the camera!";
+	     
+	     sbc.use_camera.disabled=false;
+	     sbc.use_camera.innerHTML="Release camera";
+	     sbc.use_camera.className="btn btn-danger";
+	 }else{
+	     sbc.status.innerHTML="The camera is controlled by someone else. Please wait!";
+	     sbc.use_camera.innerHTML="Camera in use";
+	     sbc.use_camera.className="btn btn-default";
+	     sbc.use_camera.disabled=true;
+	 }
+     }
+     else{
+	 sbc.status.innerHTML="Camera is <strong>available</strong>, click the <i>'Use camera'</i> button to take control!";
+	 sbc.use_camera.disabled=false;
+	 sbc.use_camera.innerHTML="Use camera";
+	 sbc.use_camera.className="btn btn-primary";
+     }
+     
+ }
+ 
+ sbc.use_camera.addEventListener("click", function(){
+     sbc.cam.use().then(function(){
+	 sbc.update_button();
+     }).catch(function(e){
+	 //sbc.use_camera.className="btn btn-danger";
+	 //sbc.use_camera.innerHTML=
+	 sbc.status.innerHTML=e.toString();
+     });
+ });
+
+ 
+ 
+ 
+</script>

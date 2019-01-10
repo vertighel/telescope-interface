@@ -11,8 +11,8 @@
 
   <div class="mb-2 row">
     <div class="btn-group col" role="group" aria-label="First group">
-      <button type="submit" name="launch" value="expose" class="btn btn-outline-secondary btn-sm col">Expose</button>
-      <button type="submit" name="launch" value="abort" class="btn btn-outline-secondary btn-sm col">Abort</button>
+      <button data-var="expose" type="submit" name="launch" value="expose" class="btn btn-outline-secondary btn-sm col">Expose</button>
+      <button data-var="abort" type="submit" name="launch" value="abort" class="btn btn-outline-secondary btn-sm col">Abort</button>
     </div>
   </div>
 
@@ -44,5 +44,7 @@
 </fieldset>
 
 <script class="builder">
-
+ 
+ var cc = this;
+ 
 </script>
