@@ -3,7 +3,7 @@
 
      display: flex;
      flex-direction: column;
-
+     border: 1px solid grey;
  }
  .image_panel>h3{
      flex: 0 1 auto;
@@ -18,21 +18,26 @@
 </style>
 
 <div class="sbc_top">
-    <h2><span data-var="title"></span>
-	<button data-var="use_camera" class="btn btn-primary">Use camera</button>
-    </h2>
-    <span data-var="status" class="text-strong sbc_status"></span>
-
-    <div class="row">
+    <h3><span data-var="title"></span>
+	<!-- <button data-var="use_camera" class="btn btn-primary">Use camera</button> -->
+    </h3>
+    <!-- <span data-var="status" class="text-strong sbc_status"></span>
+       -->
+    <div class="sb_camera_info">
+	<x-widget name="camera_button" data-class="action"> </x-widget> 
+    </div>
+    
+    
+    <div data-var="control_view" class="row">
 	<section data-var="controls" class="col-6">
-	    <h3>Controls</h3>
+	    <h4>Controls</h4>
 	    <x-widget name="ccd_settings" data-class="ti/camera-ccd"></x-widget>
 	    <x-widget name="object_settings" data-class="ti/camera-object"></x-widget>
 	    <x-widget name="control_widget" data-class="ti/camera-controls"></x-widget>
 	</section>
 	
 	<section class="col-6 image_panel">
-	    <h3>Last image : <span data-var="image_name"></span></h3>    
+	    <h4>Last image : <span data-var="image_name"></span></h4>    
 	    <x-widget name="viewer" data-class="fits_viewer" data-fits-file="lib/fits/ngc6934_v.fits"></x-widget>
 	</section>
     </div>
@@ -41,12 +46,22 @@
 <script class="builder">
  var sbc=this;
  sbc.controls.disabled=true;
+
+ var camb=sbc.childs.camera_button;
+
+ function show_control_view(enable){
+     sbc.control_view.style.display=enable? "" : "none";
+ }
+ 
+ 
  
  class sbig_camera{
      
      constructor(){
 	 this.locked=false;
 	 this.owner=false;
+	 
+	 
      }
 
      init(sock, info){
@@ -67,7 +82,7 @@
 	     console.log("Filled OB + " + JSON.stringify(cam.ob_template, null, 5));
 	     //sbc.childs.ccd_settings
 	     
-	     cam.sock.query("sbig/submit_ob", cam.ob_template, function(reply){
+	     cam.sock.query("sbig/submit_ob", { ob : cam.ob_template, cam_id : cam.info.id }, function(reply){
 		 
 	     });
 	 });
@@ -85,9 +100,10 @@
 			 else{
 			     cam.locked=false;
 			     cam.owner=false;
+			     
 			     return ok();
 			 }
-			     
+			 
 		     }).catch(fail);
 		 } else fail(new Error("use: camera locked and you are not the camera owner!"));
 	     
@@ -100,6 +116,7 @@
 		     else{
 			 cam.locked=true;
 			 cam.owner=true;
+			 
 			 ok();
 		     }
 
@@ -146,39 +163,86 @@
  
  
  sbc.update_button=function(){
+     console.log("Update button!!");
+     
      if(sbc.cam.locked==true){
 	 if(sbc.cam.owner==true){
-	     sbc.status.innerHTML="You can now control the camera!";
+
+	     camb.start({ message: "You can now control the camera!", button_message : "Release camera",
+			  start_cb : function(){
+			      console.log("RELEASE CLICK!");
+			      camb.wait({ message : "Releasing camera ..." });
+			      sbc.cam.use().then(function(){
+				  console.log("Release done!");
+				  sbc.update_button();
+			      }).catch(function(m){
+				  camb.error({ message : "Error releasing camera : " + m, button_message : "Retry",
+					       error_cb : sbc.update_button
+				  });
+			      });
+			  }});
 	     
-	     sbc.use_camera.disabled=false;
-	     sbc.use_camera.innerHTML="Release camera";
-	     sbc.use_camera.className="btn btn-danger";
+	     
+	     //sbc.status.innerHTML="You can now control the camera!";
+	     
+	     //sbc.use_camera.disabled=false;
+	     //sbc.use_camera.innerHTML="Release camera";
+	     //sbc.use_camera.className="btn btn-danger";
+
+	     show_control_view(true);
+	     
 	 }else{
-	     sbc.status.innerHTML="The camera is controlled by someone else. Please wait!";
-	     sbc.use_camera.innerHTML="Camera in use";
-	     sbc.use_camera.className="btn btn-default";
-	     sbc.use_camera.disabled=true;
+
+	     camb.start({ message: "The camera is controlled by someone else. Please wait!"});
+	     
+
+	     /* sbc.status.innerHTML="The camera is controlled by someone else. Please wait!";
+		sbc.use_camera.innerHTML="Camera in use";
+		sbc.use_camera.className="btn btn-default";
+		sbc.use_camera.disabled=true;
+	      */
+	     show_control_view(false);
+	     
 	 }
      }
      else{
-	 sbc.status.innerHTML="Camera is <strong>available</strong>, click the <i>'Use camera'</i> button to take control!";
-	 sbc.use_camera.disabled=false;
-	 sbc.use_camera.innerHTML="Use camera";
-	 sbc.use_camera.className="btn btn-primary";
+	 camb.start({
+	     message: "Camera is <strong>available</strong>, click the <i>'Use camera'</i> button to take control!",
+	     button_message: "Use camera",
+	     start_cb: function(){
+		 camb.wait({ message : "Locking camera ..." });
+		 sbc.cam.use().then(function(){
+		     console.log("LOCKING DONE OK!");
+		     sbc.update_button();
+		 }).catch(function(m){
+		     camb.error({ message : "Error locking camera : " + m, button_message : "Retry",
+				  error_cb : sbc.update_button
+		     });
+		 });
+		 
+	     }});
+	 
+	 /* sbc.status.innerHTML="Camera is <strong>available</strong>, click the <i>'Use camera'</i> button to take control!";
+	    sbc.use_camera.disabled=false;
+	    sbc.use_camera.innerHTML="Use camera";
+	    sbc.use_camera.className="btn btn-primary";
+	  */
+	 show_control_view(false);
+	 
      }
      
  }
- 
- sbc.use_camera.addEventListener("click", function(){
-     sbc.cam.use().then(function(){
-	 sbc.update_button();
-     }).catch(function(e){
-	 //sbc.use_camera.className="btn btn-danger";
-	 //sbc.use_camera.innerHTML=
-	 sbc.status.innerHTML=e.toString();
-     });
- });
-
+ /* 
+  * sbc.use_camera.addEventListener("click", function(){
+  *     sbc.cam.use().then(function(){
+    sbc.update_button();
+  *     }).catch(function(e){
+    //sbc.use_camera.className="btn btn-danger";
+    //sbc.use_camera.innerHTML=
+    camb.error({message : e.toString()});
+  *     });
+  * });
+  */
  
  
  

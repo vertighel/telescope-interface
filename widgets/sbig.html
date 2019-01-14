@@ -1,15 +1,19 @@
 
 
 <style>
+
  .sb_top{
      display: flex;
      flex-direction: column;
-     margin-left: 5em;
-     margin-right: 5em;
+
+     padding: 1em;
+     flex: 1 1 auto;
+     background-color: rgba(10,0,10,.6);
+     border-radius: 1em;
+
  }
  .sb_container{
-     background-color: rgba(10,10,10,.5);
-     flex: 0 1 auto;
+     flex: 1 1 auto;
  }
  .sb_title{
      flex: 0 1 auto;
@@ -22,10 +26,7 @@
      text-align: right;
  }
 
- .sb_camera_info{
-     background: rgba(255,255,255,0.4);
- }
-
+ 
  /*
  .form-control{
      border: 1px solid white;
@@ -39,24 +40,29 @@
 
 <div class=sb_top>
     <div class="row">
-	<h1 class="sb_title col-6">Camera controller  </h1>
-
+	<h2 class="sb_title col-6">Camera controller  </h2>
+	
 	
 	<div class="sb_server col-6">
-	    Connection to the telescope's computer :<x-widget name="ws" data-class="websocket"></x-widget>
+	    <small>Telescope computer link<x-widget name="ws" data-class="websocket"></x-widget></small>
 	</div>
 	
 
     </div>
 
     <div class="sb_container text-light">
-    </div>
 
-    <div data-var="ci" class="sb_camera_info">
-    </div>
+    
+	<div class="sb_camera_info">
+	    <x-widget name="rescan" data-class="action"> </x-widget> 
+	</div>
+	
+	<x-widget data-class="container" name="cameras"> </x-widget>
+	
 	
     </div>
 </div>
+
 
 <script class="builder">
 
@@ -74,28 +80,53 @@
  var sock=sm.new_socket({ mod_pack : sbig_handlers, mod_pack_name : "sbig"});
  sb.childs.ws.attach_client(sock);
 
+ function fill_cam_list(cams){
+     var n=0;
+     for ( var c in cams ){
+	 n++;
+         let cam=cams[c];
+
+	 factory.create_widget("ti/sbig_camera", sb.childs.cameras, sb.childs.cameras.cnt, "cam"+cam.id).then(function(cam_widget){
+	     	 console.log("Cam widget OK " + c);
+	     cam_widget.cam.init(sock,cam);
+	     if(cam.uid!==undefined){
+		 cam_widget.cam.owner=cam.uid==sm.id_data.session;
+		 cam_widget.cam.locked=true;
+	     }else cam_widget.cam.locked=false;
+	     cam_widget.update_button();
+	 });
+     }
+     return n;
+ }
+ 
  function update_cam_list(){
+     
+
      sock.query("sbig/cam_info",function(msg){
 	 //sb.ci.innerHTML="<pre>"+JSON.stringify(msg.data,null,5)+"</pre>";
-	 
 
-	     
-	 var n=0;
-	 for ( var c in msg.data ){
-	     n++;
-             let cam=msg.data[c];
-	     factory.create_widget("ti/sbig_camera", sb, sb.ci, "cam"+cam.id).then(function(cam_widget){
-		 cam_widget.cam.init(sock,cam);
-		 if(cam.uid!==undefined){
-		     cam_widget.cam.owner=cam.uid==sm.id_data.session;
-		     cam_widget.cam.locked=true;
-		 }else cam_widget.cam.locked=false;
-		 cam_widget.update_button();
-	     });
-         }
-	 if(n==0){
-	     sb.ci.innerHTML="<strong class='text-warning'>No SBIG USB camera found!</strong>";
-	 }
+	 var nc=fill_cam_list(msg.data);
+	 
+	 var rescan=sb.childs.rescan;
+	 rescan.start({ message : "<strong class='text-warning'>"+nc+" SBIG USB camera found!</strong>",
+			button_message : "Rescan USB",
+			start_cb: function(){
+			    rescan.wait({
+				message : "Requesting a new USB scan on telescope server..."
+			    });
+
+			    sb.childs.cameras.destroy_childs();
+			    sock.query("sbig/usb_scan",function(msg){
+				update_cam_list();
+				/* if(msg.data.error!==undefined){
+				   rescan.error({ message : msg.data.error, button_message : "Rescan USB", error_cb : update_cam_list});
+				   }else
+				   fill_cam_list(msg.data);*/
+			    });
+			    
+			}
+	 });
+	 
      });
      
 
@@ -109,11 +140,11 @@
      };
  });
  
- sock.mods.install_mod("system",{
+ sock.mods.install_mod({
      broadcast : function(msg, reply){
 	 console.log("Broadcast message " + JSON.stringify(msg.data) );
      }
- });
+ }, "system");
  
  sock.connect().catch(function(error){
      

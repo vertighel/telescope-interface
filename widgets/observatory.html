@@ -33,7 +33,7 @@
  }
 
  .hp_title_image > img{
-     max-width: 30vw;
+     max-width: 50vw;
  }
  
  .hp_title_image {
@@ -43,13 +43,15 @@
  .ob_title{
      display: flex;
      flex: 1 1 auto;
-     align-items: flex-end;
+     align-items: center;
+     justify-content: center;
  }
 
   .ob_title_text{
      color: tomato;
-     font-size: 1.5em;
-     flex: 1 1 auto;
+      font-size: 1em;
+      font-wight: bold;
+      flex: 0 1 auto;
  }
 
  .ob_identity{
@@ -68,28 +70,37 @@
      overflow-y: auto;
  }
 
+ .sbig{
+     flex: 2 0 auto;
+     display: flex;
+
+ }
  
 </style>
 
 <x-widget data-class="system"> </x-widget>
 
 <div class="hp_container_top">
-    <div data-var="ident" class="ob_identity"></div>
     
     <div class="hp_container">
+
+
 	<div class="hp_title">
 	    <div class="hp_title_image">
 		<img src="res/title.png"> </img> 
 	    </div>
 	    <div class="ob_title">
+	
 		<div class="ob_title_text">
 		    Virtual Observatory
 		</div>
 	    </div>
 
 	</div>
-	
-	<x-widget data-class="ti/sbig"> </x-widget>
+	<div class="sbig">
+	    <x-widget data-class="ti/sbig"> </x-widget>
+	</div>
+	<div data-var="ident" class="ob_identity"></div>
     </div>
     
 </div>
