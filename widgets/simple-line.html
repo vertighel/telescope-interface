@@ -13,15 +13,15 @@
 
 </style>
 
-<svg data-var="svg" width="160" height="130"></svg>
+<svg data-var="simpleLineSvg" width="160" height="130"></svg>
 
-<button data-var="createNewPoint" class="btn btn-secondary">point</button>
+<button data-var="simpleLineNewPoint" class="btn btn-secondary">point</button>
 
 <script class="builder">
 
- var sline=this;
+var simpleLine=this;
 /// test function to create points
-$(sline.createNewPoint).on("click",function(){
+$(simpleLine.simpleLineNewPoint).on("click",function(){
     var newdatum = {x:new Date(), y:Math.random()};
     update(newdatum);    
 });
@@ -29,11 +29,12 @@ $(sline.createNewPoint).on("click",function(){
 var n = 10; /// Max number of data points in the chart
 var data = [];
 
-var svg = d3.select(sline.svg),
+var svg = d3.select(simpleLine.simpleLineSvg),
     margin = {top: 2, right: 2, bottom: 2, left: 4},
     width = +svg.attr("width") - margin.left - margin.right,
-    height = +svg.attr("height") - margin.top - margin.bottom,
-    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    height = +svg.attr("height") - margin.top - margin.bottom;
+
+var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 var x = d3.scaleTime()
     .range([0, width])
