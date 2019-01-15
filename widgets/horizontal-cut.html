@@ -12,66 +12,47 @@
 }
 
 
- .plot_container {
-     display : flex;
-     flex-direction: column;
- }
- .plot_container > svg {
-     flex: 0 1 auto;
-     z-index: 2;
- }
+<svg data-var="horizontalCutSvg" width="640" height="100"></svg>
 
-</style>
-
-
-<div class="plot_container" data-var="cnt">
-    <svg data-var="svg"></svg>
-</div>
+<button data-var="horizontalCutNewSet" class="btn btn-secondary">change</button>
 
 <script class="builder">
- 
- var hplot=this;
- /// test function to create points
- hplot.test=function(){
-     var numbers = Array.from({length: 64}, () => Math.floor(Math.random()*65535 ));
-     var newdatum = numbers.map(function(d,i){
-         return {
+    
+var horizontalCut=this
+/// test function to create points
+$(horizontalCut.horizontalCutNewSet).on("click",function(){
+    var numbers = Array.from({length: 64}, () => Math.floor(Math.random()*65535 ));
+    var newdatum = numbers.map(function(d,i){
+        return {
             x : i,
-	     //            x : Math.floor(i/(64/4)), // 4 lines
-             y : i%16,  // 16 columns
-             z : d
-         }
-     })
-     update(newdatum);
- };
- 
- var data = [];
- 
- var svg = d3.select(hplot.svg);
- 
- 
- var    margin = {top: 20, right: 20, bottom: 20, left: 40};
- console.log("Ouiii" + svg);
- var width = +svg.attr("width") - margin.left - margin.right;
- console.log("Ouiii" + svg);
- 
- var    height = +svg.attr("height") - margin.top - margin.bottom;
- console.log("Ouiii" + svg);
- var    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+//            x : Math.floor(i/(64/4)), // 4 lines
+            y : i%16,  // 16 columns
+            z : d
+        }
+    })
+    update(newdatum);
+});
 
- console.log("Ouiii" + svg);
+var data = [];
 
- var x = d3.scaleLinear()
-	   .range([0, width])
-           .domain([0, 1]); /// Just to draw
- 
- var y = d3.scaleLinear()
-	   .range([height, 0])
-          .domain([0, 1]); /// Just to draw
- 
- var xAxis = d3.axisBottom(x).tickFormat(d3.format("d"));
- var yAxis = d3.axisLeft(y).ticks(3).tickFormat(d3.format("d"));
- 
+var svg = d3.select(horizontalCut.horizontalCutSvg),
+    margin = {top: 20, right: 20, bottom: 20, left: 40},
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom;
+
+var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var x = d3.scaleLinear()
+    .range([0, width])
+        .domain([0, 1]); /// Just to draw
+
+var y = d3.scaleLinear()
+    .range([height, 0])
+        .domain([0, 1]); /// Just to draw
+
+var xAxis = d3.axisBottom(x).tickFormat(d3.format("d"));
+var yAxis = d3.axisLeft(y).ticks(3).tickFormat(d3.format("d"));
+
 /// Define the line
  var line = d3.line()
 	      .x(function(d,i) { return x(d.x); })

@@ -14,21 +14,21 @@
 
 </style>
 
+<svg data-var="verticalCutSvg" width="100" height="640"></svg>
 
-<svg data-var="svg" width="100" height="640"></svg>
+
+<button data-var="verticalCutNewSet" class="btn btn-secondary">change</button>
 
 <script class="builder">
 
-var vc=this;
- 
+var verticalCut=this
 /// test function to create points
-vc.test=function(){
-     var numbers = Array.from({length: 64}, () => Math.floor(Math.random()*65535 ));
-     var newdatum = numbers.map(function(d,i){
-         return {
-             x : Math.floor(i/(64/4)), // 4 lines
-             y : i,
-//            y : i%16,  // 16 columns
+$(verticalCut.verticalCutNewSet).on("click",function(){
+    var numbers = Array.from({length: 64}, () => Math.floor(Math.random()*65535 ));
+    var newdatum = numbers.map(function(d,i){
+        return {
+            x : Math.floor(i/(64/4)), // 4 lines
+            y : i,
              z : d
          }
      });
@@ -37,11 +37,14 @@ vc.test=function(){
 
 var data = [];
 
-var svg = d3.select(vc.svg),
+
+var svg = d3.select(verticalCut.verticalCutSvg),
+
     margin = {top: 20, right: 30, bottom: 40, left: 20},
     width = +svg.attr("width") - margin.left - margin.right,
-    height = +svg.attr("height") - margin.top - margin.bottom,
-    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    height = +svg.attr("height") - margin.top - margin.bottom;
+
+var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 var x = d3.scaleLinear()
     .range([width,0])
