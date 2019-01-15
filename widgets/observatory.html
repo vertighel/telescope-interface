@@ -25,19 +25,21 @@
 
  .hp_title{
      width: 100%;
-     flex-grow: 0;
+     flex: 1 1 auto;
      display: flex;
      flex-direction: row;
      justify-content: flex-start;
      align-items: stretch;
+     max-height: 10vh;
  }
 
  .hp_title_image > img{
-     max-width: 50vw;
+     max-height: 100%;
  }
  
  .hp_title_image {
-     flex-grow: 0;
+     flex: 1 1 auto;
+     max-height: 10vh;
  }
 
  .ob_title{
@@ -66,14 +68,14 @@
      margin-right: 5rem;
      margin-bottom: 2rem;
      flex-grow: 1;
-     flex: 2 0 auto;
+     flex: 2 1 auto;
      overflow-y: auto;
  }
 
  .sbig{
-     flex: 2 0 auto;
+     flex: 2 1 auto;
      display: flex;
-
+     border: 2px solid purple;
  }
  
 </style>

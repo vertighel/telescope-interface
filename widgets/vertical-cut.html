@@ -2,10 +2,11 @@
 <style>
 
 .line {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 1.2px;
-}
+  
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.2px;
+ }
 
 .area {
   fill: lightsteelblue;
@@ -14,29 +15,29 @@
 </style>
 
 
-<svg width="100" height="640"></svg>
+<svg data-var="svg" width="100" height="640"></svg>
 
-<button id="createNewSet" class="btn btn-secondary">change</button>
+<script class="builder">
 
-<script>
-
+var vc=this;
+ 
 /// test function to create points
-$("#createNewSet").on("click",function(){
-    var numbers = Array.from({length: 64}, () => Math.floor(Math.random()*65535 ));
-    var newdatum = numbers.map(function(d,i){
-        return {
-            x : Math.floor(i/(64/4)), // 4 lines
-            y : i,
+vc.test=function(){
+     var numbers = Array.from({length: 64}, () => Math.floor(Math.random()*65535 ));
+     var newdatum = numbers.map(function(d,i){
+         return {
+             x : Math.floor(i/(64/4)), // 4 lines
+             y : i,
 //            y : i%16,  // 16 columns
-            z : d
-        }
-    })
-    update(newdatum);
-});
+             z : d
+         }
+     });
+     update(newdatum);
+ };
 
 var data = [];
 
-var svg = d3.select("svg"),
+var svg = d3.select(vc.svg),
     margin = {top: 20, right: 30, bottom: 40, left: 20},
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom,
@@ -123,5 +124,7 @@ function update(newdatum){
         .attr("d", area);
     
 }
-
+ setInterval(function(){
+     vc.test();
+ }, 1000);
 </script>
