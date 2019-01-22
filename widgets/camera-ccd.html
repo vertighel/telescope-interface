@@ -128,8 +128,12 @@
 	      if(pars.subframe !== undefined) cam_ccd.subframe=pars.subframe;
 	  }
       }
-
+      
       cam_ccd.cooling_enabled.addEventListener("change", function(){
+	  var cam=cam_ccd.parent.cam;
+	  cam.sock.query("sbig/set_cooling_info", { cam_id : cam.info.id, cooling_info : cam_ccd.get_params().cooling }, function(rep_data){
+	      cam_ccd.parent.debug.newline("reply received "  + JSON.stringify(rep_data));
+	  } );
 	  console.log("Change!!");
       });
 

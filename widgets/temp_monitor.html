@@ -35,20 +35,24 @@
 
  
 </style>
-
+<span data-var="wi"></span>
 <div class="plot_container" data-var="cnt">
     <svg data-var="svg"></svg>
 </div>
 
 <script class="builder">
+ var widget_info = { id : "none"};
  
- var vc=this,x,y,xAxis,yAxis,line,area,xa,ya;
+ var vc=this,x,y,xAxis,yAxis,line,area,xa,ya,garea,gline;
  vc.temp_mon_id=0;
  vc.data=[];
  
+ 
+
 /// test function to create points
 vc.test=function(){
-     var numbers = Array.from({length: 64}, () => Math.floor(Math.random()*65535 ));
+     var numbers = Array.from({length: 64}, () => 0 );
+     
      vc.data = numbers.map(function(d,i){
          return {
              x : Math.floor(i/(64/4)), // 4 lines
@@ -63,7 +67,7 @@ vc.test=function(){
  };
 
  vc.build=function(){
-
+     
      var svg = d3.select(vc.svg);
 
      vc.svg.innerHTML="";
@@ -99,14 +103,14 @@ vc.test=function(){
 		  .y(function(d) { return y(d.z); });
      
      /// Drawing the area
-     g.append("g")
+     garea=g.append("g")
       .datum(vc.data)
       .append("path")
       .attr("class", "area")
       .attr("d", area);
      
      /// Drawing the line
-     g.append("g") 
+     gline=g.append("g") 
       .datum(vc.data)
       .append("path")
       .attr("class", "line")
@@ -142,6 +146,7 @@ vc.test=function(){
  
  /// Updating data, line and axes
  function update(){
+     vc.wi.innerHTML=new Date();
      vc.build();
      //     vc.data=newdatum;
      var data=vc.data;
@@ -160,13 +165,15 @@ vc.test=function(){
      ya.call(yAxis);
      
      
-     d3.select(".line")
-       .datum(data)
-       .attr("d", line);
+     //d3.select(line)
+     gline
+	 .datum(data)
+	 .attr("d", line);
      
-     d3.select(".area")
-       .datum(data)
-       .attr("d", area);
+     //d3.select(area)
+     garea
+	 .datum(data)
+	 .attr("d", area);
      
 }
  vc.test();

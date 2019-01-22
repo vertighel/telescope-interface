@@ -4,9 +4,17 @@
      flex: 1 1 auto;
      display: flex;
      flex-direction: column;
-     justify-content: center;
-     align-items: center;
+     justify-content: space-between;
+     align-items: stretch;
  }
+
+ .title{
+     font-size: 1.5em;
+     font-weight: bold;
+     color: tomato;
+     
+ }
+ 
  .sbc_status{
      font-size:1.3em;
  }
@@ -14,20 +22,26 @@
  .control_view{
      flex: 1 1 auto;
      display: flex;
-     flex-direction: column;
+     flex-direction: row;
  }
 
- .sb_camera_info{
+ .sb_cam_info{
      flex: 1 1 auto;
      display: flex;
-     flex-direction: column;
-     justify-content: center;
-     align-items: center;
+     flex-direction: row;
+     justify-content: flex-start;
+     align-items: stretch;
+     border: 5px solid rgba(200,50,200,.2);
+ }
+
+ .sb_camera_info > span{
+     flex: 1 1 auto;
  }
  
  .controls{
      flex: 1 1 auto;
-
+     border: 5px solid rgba(200,50,200,.2);
+     padding: .5em;
  }
 
  .image_panel{
@@ -35,8 +49,8 @@
      display: flex;
      flex: 1 1 auto;
      flex-direction: column;
-     border: 1px solid grey;
-     min-height: 100vh;
+     border: 5px solid rgba(200,50,200,.2);
+     padding: .5em;
  }
  .image_panel>h3{
      flex: 0 1 auto;
@@ -45,31 +59,33 @@
 </style>
 
 <div class="sbc_top">
-    <!-- <span data-var="status" class="text-strong sbc_status"></span>
-       -->
-    <div class="sb_camera_info">
-	<h3><span data-var="title"></span>
-	    <!-- <button data-var="use_camera" class="btn btn-primary">Use camera</button> -->
-	</h3>
+
+    <div class="sb_cam_info">
 	
-	<x-widget name="camera_button" data-class="action"> </x-widget> 
+	<span class="title" data-var="title"></span> <x-widget name="camera_button" data-class="action"> </x-widget>
+
+	
     </div>
 
     
     
     <div data-var="control_view" class="control_view">
 	<section data-var="controls" class="controls">
-	    <x-widget name="temp_monitor" data-class="ti/temp_monitor"> </x-widget>
+	    
 	    <x-widget name="ccd_settings" data-class="ti/camera-ccd"></x-widget>
 	    <x-widget name="object_settings" data-class="ti/camera-object"></x-widget>
 	    <x-widget name="control_widget" data-class="ti/camera-controls"></x-widget>
 	</section>
 	
 	<section class="image_panel">
+	    <h4>Temperature monitor</h4>
+	    <x-widget name="temp_monitor" data-class="ti/temp_monitor"> </x-widget>
 	    <h4>Last image : <span data-var="image_name"></span></h4>    
-	    <x-widget name="viewer" data-class="fits_viewer" data-fits-file="lib/fits/ngc6934_v.fits"></x-widget>
+	    <x-widget name="viewer" data-class="glscreen" data-fits-file="lib/fits/ngc6934_v.fits"></x-widget>
 	</section>
     </div>
+
+    <x-widget name="camera_console" data-class="console"> </x-widget> 
 </div>
 
 <script class="builder">
@@ -77,8 +93,10 @@
  sbc.controls.disabled=true;
 
  var camb=sbc.childs.camera_button;
+ var debug=sbc.debug=sbc.childs.camera_console;
 
  var ccd_settings=sbc.childs.ccd_settings;
+ var object_settings=sbc.childs.object_settings;
  
  function show_control_view(enable){
      sbc.control_view.style.display=enable? "" : "none";
@@ -102,6 +120,7 @@
 	 this.sock=sock;
 	 this.info=info;
 	 sbc.title.innerHTML=info.name + "<small>, serial "+info.serial+"</small>";
+
 	 sbc.update_button();
 
 	 this.sock.query("sbig/get_ob_template", function(reply){
@@ -110,16 +129,33 @@
 
 	 
 	 sbc.childs.control_widget.expose.addEventListener("click", function(){
-	     console.log("Expose!");
+	     
+	     
 	     cam.fill_ob(sbc.cam.ob_template, sbc);
+	     sbc.debug.newline("Expose! OB=" + JSON.stringify(cam.ob_template,null,5));
 	     console.log("Filled OB + " + JSON.stringify(cam.ob_template, null, 5));
 	     //sbc.childs.ccd_settings
 	     
 	     cam.sock.query("sbig/submit_ob", { ob : cam.ob_template, cam_id : cam.info.id }, function(reply){
+		 //console.log("Got OB reply !" + JSON.stringify(reply));
+		 var img={
+		     data: reply.bin_data.objects[0].data,
+		     width : reply.data.width,
+		     heigth : reply.data.height
+		 };
+		 sbc.childs.viewer.start().then(function(gls){
+		     console.log("Creating LAYER !");
+		     gls.glm.create_layer(img).then(function(){
+			 console.log("OK");
+			 gls.glm.render();
+		     }).catch(function(e){
+			 console.error(e);
+		     });
+		 });
 		 
 	     });
+	     
 	 });
-
      }
      
      use(cb){
@@ -198,6 +234,8 @@
 
 
  sbc.monitor_temperature=function(enable){
+
+     return;
      
      if(enable && sbc.temp_monitor!==undefined) return;
      if(!enable && sbc.temp_monitor===undefined) return;
@@ -235,7 +273,8 @@
  
  
  sbc.update_button=function(){
-     console.log("Update button!!");
+
+     console.log("Update button !! locked=" + sbc.cam.locked);
      
      if(sbc.cam.locked==true){
 	 if(sbc.cam.owner==true){
@@ -243,9 +282,12 @@
 	     camb.start({ message: "You can now control the camera!", button_message : "Release camera",
 			  start_cb : function(){
 			      console.log("RELEASE CLICK!");
+
+			      
 			      camb.wait({ message : "Releasing camera ..." });
 			      sbc.cam.use().then(function(){
 				  console.log("Release done!");
+				  sbc.parent.parent.childs.rescan.div.style.display="";
 				  sbc.update_button();
 			      }).catch(function(m){
 				  camb.error({ message : "Error releasing camera : " + m, button_message : "Retry",
@@ -265,7 +307,7 @@
 	     
 	 }else{
 
-	     camb.start({ message: "The camera is controlled by someone else. Please wait!"});
+	     camb.start({ message: "The camera is controlled by someone else (UID = "+ + "). Please wait!"});
 	     
 
 	     /* sbc.status.innerHTML="The camera is controlled by someone else. Please wait!";
@@ -283,14 +325,17 @@
 	     button_message: "Use camera",
 	     start_cb: function(){
 		 camb.wait({ message : "Locking camera ..." });
+		 sbc.parent.parent.childs.rescan.div.style.display="none";
+		 
 		 sbc.cam.use(function(init_msg){
-		     console.log("use message " + JSON.stringify(init_msg));
-		     
+		     //console.log("use message " + JSON.stringify(init_msg));
+		     //camb.ci.innerHTML=JSON.stringify(init_msg);
+		     debug.newline("Init message: "+JSON.stringify(init_msg));
 		 }).then(function(init_data){
 		     		     
 		     if(init_data.type=="success"){
 		     }			 
-		     console.log("LOCKING DONE OK! " + JSON.stringify(init_data, null, 10));
+		     //console.log("LOCKING DONE OK! " + JSON.stringify(init_data, null, 10));
 
 		     sbc.monitor_temperature(true);
 		     sbc.update_button();
