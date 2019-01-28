@@ -4,12 +4,12 @@
 .line {
   
     fill: none;
-    stroke: steelblue;
-    stroke-width: 1.2px;
+    stroke: springgreen;
+    stroke-width: 2px;
  }
 
 .area {
-  fill: lightsteelblue;
+  fill: rgba(255,255,255,.1);
 }
 
  
@@ -33,11 +33,46 @@
      z-index: 2; 
  }
 
+ .wi{
+     font-size:0.7em;
+     color: springgreen;
+     flex: 1 1 auto;
+ }
+  .ccd_temp{
+      font-size:0.7em;
+      color: tomato;
+      margin-right: 1rem;
+  }
+ 
+ .cooling_power{
+     font-size:0.7em;
+     color: tomato;
+ }
+
+ .temp_monitor{
+     max-width: 80vh;
+     flex: 1 1 auto;
+     display: flex;
+     flex-direction: column;
+     padding: .5rem;
+ }
+ .temp_info{
+     flex: 1 1 auto;
+     display: flex;
+     justify-content: flex-end; 
+ }
  
 </style>
-<span data-var="wi"></span>
-<div class="plot_container" data-var="cnt">
-    <svg data-var="svg"></svg>
+
+<div class="temp_monitor">
+    <span class="wi" data-var="wi"></span>
+    <div class="temp_info">
+	<span class="ccd_temp" data-var="ccd_temp">CCDTemp</span>
+	<span class="cooling_power" data-var="cooling_power">CoolPower</span>
+    </div>
+    <div class="plot_container" data-var="cnt">
+	<svg data-var="svg"></svg>
+    </div>
 </div>
 
 <script class="builder">
@@ -75,7 +110,7 @@ vc.test=function(){
 
      var bbox=vc.svg.getBoundingClientRect(); //svg.getBBox();
      
-     var	 margin = {top: 20, right: 0, bottom: 60, left: 40},
+     var	 margin = {top: 10, right: 10, bottom: 20, left: 30},
 	 width = +bbox.width - margin.left - margin.right,
 	 height = +bbox.height - margin.top - margin.bottom,
 	 g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -135,10 +170,13 @@ vc.test=function(){
       .call(yAxis);
  }
 
- vc.update_temp=function(temp){
+ vc.update_temp=function(cool_info){
+
+     var temp=cool_info.ccd_temp;
      
      if(vc.temp_mon_id>=64) vc.temp_mon_id=0;
-
+     vc.ccd_temp.innerHTML="CCD Temp: "+Math.floor(temp*100)/100.0+"C ";
+     vc.cooling_power.innerHTML="Power: "+Math.floor(cool_info.cooling_power*10000)/100.0+"%";
      vc.data[vc.temp_mon_id].z=temp;
      update();
      vc.temp_mon_id++;

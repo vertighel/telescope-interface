@@ -1,10 +1,9 @@
 <style>
  .sbc_top{
-     padding: 1rem;
      flex: 1 1 auto;
      display: flex;
      flex-direction: column;
-     justify-content: space-between;
+     justify-content: stretch; 
      align-items: stretch;
  }
 
@@ -20,18 +19,22 @@
  }
 
  .control_view{
-     flex: 1 1 auto;
+     flex: 2 1 auto;
      display: flex;
      flex-direction: row;
+/*     border: 1px solid #888; */
+     max-width: 95vw;
+     padding: .5rem;
  }
 
  .sb_cam_info{
      flex: 1 1 auto;
      display: flex;
-     flex-direction: row;
+     flex-direction: column;
      justify-content: flex-start;
      align-items: stretch;
-     border: 5px solid rgba(200,50,200,.2);
+     padding-left: .5rem;
+/*      border: 5px solid rgba(200,50,200,.2); */
  }
 
  .sb_camera_info > span{
@@ -40,8 +43,8 @@
  
  .controls{
      flex: 1 1 auto;
-     border: 5px solid rgba(200,50,200,.2);
-     padding: .5em;
+/*     border: 5px solid rgba(200,50,200,.2); 
+     padding: .5em;*/
  }
 
  .image_panel{
@@ -49,8 +52,8 @@
      display: flex;
      flex: 1 1 auto;
      flex-direction: column;
-     border: 5px solid rgba(200,50,200,.2);
-     padding: .5em;
+/*     border: 5px solid rgba(200,50,200,.2);
+     padding: .5em;  */
  }
  .image_panel>h3{
      flex: 0 1 auto;
@@ -62,12 +65,16 @@
 
     <div class="sb_cam_info">
 	
-	<span class="title" data-var="title"></span> <x-widget name="camera_button" data-class="action"> </x-widget>
+	<span class="title" data-var="title"></span>
 
+	<x-widget name="camera_button" data-class="action"> </x-widget>
+
+	<!-- <strong>Temperature monitor</strong>
+	   -->
 	
     </div>
 
-    
+    <x-widget name="temp_monitor" data-class="ti/temp_monitor"> </x-widget>
     
     <div data-var="control_view" class="control_view">
 	<section data-var="controls" class="controls">
@@ -77,15 +84,17 @@
 	    <x-widget name="control_widget" data-class="ti/camera-controls"></x-widget>
 	</section>
 	
-	<section class="image_panel">
-	    <h4>Temperature monitor</h4>
-	    <x-widget name="temp_monitor" data-class="ti/temp_monitor"> </x-widget>
-	    <h4>Last image : <span data-var="image_name"></span></h4>    
-	    <x-widget name="viewer" data-class="glscreen" data-fits-file="lib/fits/ngc6934_v.fits"></x-widget>
-	</section>
     </div>
 
-    <x-widget name="camera_console" data-class="console"> </x-widget> 
+
+    <div class="image_panel">
+	<strong>Last image : <span data-var="image_name"></span></strong>    
+	<x-widget name="viewer" data-class="glscreen" data-fits-file="lib/fits/ngc6934_v.fits"></x-widget>
+
+    </div>
+
+    <x-widget name="camera_console" data-class="console"> </x-widget>
+		
 </div>
 
 <script class="builder">
@@ -111,9 +120,50 @@
      constructor(){
 	 this.locked=false;
 	 this.owner=false;
-	 
+	 this.gls=undefined;
 	 
      }
+     
+     display_image(reply){
+	 var cam=this;
+	 
+	 var data=reply.bin_data.objects[0].data;
+	 
+	 var uint_data=new Uint16Array(data);
+	 console.log("UINT DATA " + uint_data[0] + ", " + uint_data[1] + " W="+reply.data.width + " H= "+reply.data.height);
+
+	 var img={
+	     data: new Uint16Array(data),
+	     dims : [reply.data.width,reply.data.height],
+	     width : reply.data.width,
+	     heigth : reply.data.height,
+	     ext : [0, 2000]
+	 };
+	 
+	 if(cam.gls==undefined){
+	     sbc.childs.viewer.start().then(function(_gls){
+		 cam.gls=_gls;
+		 console.log("Layers L="+cam.gls.glm.layers.length);
+		 
+		 console.log("Creating LAYER !");
+		 
+		 cam.gls.glm.create_layer(img).then(function(layer){
+		     console.log("---------------->create layer OK");
+		     cam.gls.glm.render();
+		 }).catch(function(e){
+		     console.error(e);
+		 });
+	     });
+	 }else{
+	     
+	     var layer = cam.gls.glm.layers[0];
+	     layer.setup_image(img);
+	     cam.gls.glm.render();
+	 }
+	 
+     }
+     
+     
 
      init(sock, info){
 	 var cam=this;
@@ -127,6 +177,15 @@
 	     cam.ob_template=reply.data;
 	 });
 
+
+	 setTimeout(function(){
+	     cam.sock.query("sbig/get_last_image", { cam_id : cam.info.id }, function(reply){
+		 console.log("LAST image received reply!");
+		 if(reply.data.error===undefined)
+		     ;//cam.display_image(reply);
+	     });
+	 }, 1500);
+
 	 
 	 sbc.childs.control_widget.expose.addEventListener("click", function(){
 	     
@@ -138,20 +197,37 @@
 	     
 	     cam.sock.query("sbig/submit_ob", { ob : cam.ob_template, cam_id : cam.info.id }, function(reply){
 		 //console.log("Got OB reply !" + JSON.stringify(reply));
-		 var img={
-		     data: reply.bin_data.objects[0].data,
-		     width : reply.data.width,
-		     heigth : reply.data.height
-		 };
-		 sbc.childs.viewer.start().then(function(gls){
-		     console.log("Creating LAYER !");
-		     gls.glm.create_layer(img).then(function(){
-			 console.log("OK");
-			 gls.glm.render();
-		     }).catch(function(e){
-			 console.error(e);
-		     });
-		 });
+		 //cam.display_image(reply);
+		 
+		 /* var uint_data=new Uint16Array(reply.bin_data.objects[0].data);
+		    console.log("UINT DATA " + uint_data[0] + ", " + uint_data[1]);
+		    var img={
+		    data: new Uint16Array(reply.bin_data.objects[0].data),
+		    dims : [reply.data.width,reply.data.height],
+		    width : reply.data.width,
+		    heigth : reply.data.height,
+		    ext : [0, 2000]
+		    };
+		    if(gls==undefined){
+		    sbc.childs.viewer.start().then(function(_gls){
+		    gls=_gls;
+		    console.log("Layers L="+gls.glm.layers.length);
+		    
+		    console.log("Creating LAYER !");
+		    
+		    gls.glm.create_layer(img).then(function(layer){
+		    console.log("---------------->create layer OK");
+		    gls.glm.render();
+		    }).catch(function(e){
+		    console.error(e);
+		    });
+		    });
+		    }else{
+		    
+		    var layer = gls.glm.layers[0];
+		    layer.setup_image(img);
+		    gls.glm.render();
+		    }*/
 		 
 	     });
 	     
@@ -178,8 +254,9 @@
 	     
 	     }
 	     else{
+		 
 		 cam.sock.query("sbig/use_camera", { cam_id : cam.info.id },function(reply){
-		     //console.log("use reply : " + JSON.stringify(reply));
+		     debug.newline("use reply : <pre> " + JSON.stringify(reply,null,5) + "</pre>");
 		     if(reply.error!==undefined)
 			 fail(new Error(reply.error));
 		     else{
@@ -245,7 +322,7 @@
      }else{
 	 
 	 sbc.temp_monitor=setInterval(function(){
-
+	     
 	     if(sbc.cam.locked==false || sbc.cam.owner==false) { clearInterval(sbc.temp_monitor); return; }
 	     if(sbc.cam.sock===undefined) { clearInterval(sbc.temp_monitor); return; }
 	     

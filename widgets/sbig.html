@@ -6,15 +6,13 @@
      display: flex;
      flex-direction: column;
 
-     padding: 1em;
      flex: 1 1 auto;
 
-     background-color: rgba(10,10,10,.6);
+     background-color: rgba(10,10,10,.8);
      border-radius: 1em;
-
-
-     color: white;
+     color: #aaa;
      max-width: 100%;
+     overflow-x: hide;
  }
 
  .sb_top > .console{
@@ -27,6 +25,7 @@
      display: flex;
      flex-direction: column;
      overflow-y: auto;
+     overflow-x: hidden;
  }
 
  .sbig_toolbar {
@@ -35,6 +34,8 @@
      flex-direction: row;
      align-items : center;
      align-content : center;
+     padding: .5rem;
+     background : rgba(10,10,10,.7);
  }
  .sb_title{
      flex: 0 1 auto;
@@ -68,6 +69,9 @@
 
 <div class="sb_top">
 
+    <div class="sb_server">
+	<small>Telescope computer link<x-widget name="ws" data-class="websocket"></x-widget></small>
+	</div>
     
     <div class="sbig_toolbar">
 	<h2 class="sb_title">Camera controller</h2>
@@ -77,9 +81,6 @@
 	    
 	</div>
 
-	<div class="sb_server">
-	    <small>Telescope computer link<x-widget name="ws" data-class="websocket"></x-widget></small>
-	</div>
 	
     </div>
 
@@ -148,8 +149,8 @@
 
      debug.newline("Query cam list ...");
      sock.query("sbig/cam_info",function(msg){
-	 //sb.ci.innerHTML="<pre>"+JSON.stringify(msg.data,null,5)+"</pre>";
-	 debug.newline("Received cam list !");
+	 debug.newline("<pre>"+JSON.stringify(msg.data,null,5)+"</pre>");
+	 //debug.newline("Received cam list !");
 	 
 	 var nc=fill_cam_list(msg.data);
 	 
@@ -230,11 +231,21 @@
 				     ambient_temp : cool.ambient_temp
 				 }
 			     });
-			     cam.childs.temp_monitor.update_temp(cool.ccd_temp);
+			     cam.childs.temp_monitor.update_temp(cool);
 			 }
 		     }
 		 }
 	 	 
+		 break;
+	     case "image":
+		 if(sb.childs.cameras.childs!==undefined){
+		     var cam_widget=sb.childs.cameras.childs["cam"+msg.data.data.cid];
+		     if(cam_widget!==undefined){
+			 msg.data.bin_data=msg.bin_data;
+			 console.log("Message is " + JSON.stringify(msg.data) + " BIN ? " + msg.bin_data);
+			 cam_widget.cam.display_image(msg.data);
+		     }
+		 }
 		 break;
 	     default: break;
 	 }

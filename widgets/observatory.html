@@ -25,58 +25,26 @@
 
  .hp_title{
      width: 100%;
-     flex: 1 1 auto;
-     display: flex;
-     flex-direction: row;
+     flex: 0 2 auto;
      justify-content: flex-start;
      align-items: stretch;
-     max-height: 10vh;
  }
 
- .hp_title_image > img{
-     max-height: 10vh;
+ .hp_title > img{
+     max-height: 80px;
  }
  
  .hp_title_image {
      flex: 1 1 auto;
-     
- }
-
- .ob_title{
+     max-width:100%;
      display: flex;
-     flex: 1 1 auto;
-     align-items: center;
-     justify-content: center;
- }
-
-  .ob_title_text{
-     color: tomato;
-      font-size: 1em;
-      font-wight: bold;
-      flex: 0 1 auto;
- }
-
- .ob_identity{
-     color: yellow;
-     font-size: .8em;
-     text-align: right;
-     flex: 0 1 auto;
- }
- .hp_content{
-     width: 100%;
-     margin-left: 5rem;
-     margin-right: 5rem;
-     margin-bottom: 2rem;
-     flex-grow: 1;
-     flex: 2 1 auto;
-     overflow-y: auto;
+     padding: .5rem;
+ 
  }
 
  .sbig{
-     max-width:100%;
      flex: 2 1 auto;
-     display: flex;
- 
+     overflow-y: auto;
  }
  
 </style>
@@ -89,17 +57,18 @@
 
 
 	<div class="hp_title">
-	    <div class="hp_title_image">
-		<img src="res/title.png"> </img> 
-	    </div>
-	    
-	    <div class="ob_title">
-		
-		<div class="ob_title_text">
-		    Virtual Observatory
-		</div>
-	    </div>
+	    <img src="res/title.png"> </img> 
 
+	    
+	    <!-- <div class="ob_title">
+	    <div class="hp_title_image">
+	    </div>
+		 
+		 <div class="ob_title_text">
+		 Virtual Observatory
+		 </div>
+		 </div>
+	       -->
 	</div>
 	<div class="sbig">
 	    <x-widget data-class="ti/sbig"> </x-widget>
