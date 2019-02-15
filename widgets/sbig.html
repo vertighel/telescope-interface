@@ -70,14 +70,14 @@
 <div class="sb_top">
 
     <div class="sb_server">
-	<small>Telescope computer link<x-widget name="ws" data-class="websocket"></x-widget></small>
+	<small>Telescope computer link<x-widget name="ws" data-class="widgets/websocket"></x-widget></small>
 	</div>
     
     <div class="sbig_toolbar">
 	<h2 class="sb_title">Camera controller</h2>
 
 	<div class="sb_camera_info">
-	    <x-widget name="rescan" data-class="action"> </x-widget>
+	    <x-widget name="rescan" data-class="widgets/action"> </x-widget>
 	    
 	</div>
 
@@ -88,12 +88,12 @@
     
     <div class="sb_container text-light">
 	
-	<x-widget data-class="container" name="cameras"> </x-widget>
+	<x-widget data-class="widgets/container" name="cameras"> </x-widget>
 	
 	
     </div>
 
-    <x-widget name="sbig_console" data-class="console"> </x-widget> 
+    <x-widget name="sbig_console" data-class="widgets/console"> </x-widget> 
 </div>
 
 
@@ -128,7 +128,7 @@
 	 //sb.childs.cameras.cnt.appendChild(div);
 	 //div.innerHTML=cam.serial + " " + cam.name;
 	 
-	 factory.create_widget("ti/sbig_camera", sb.childs.cameras, sb.childs.cameras.cnt, "cam"+cam.id).then(function(cam_widget){
+	 factory.create_widget("sbig_camera", sb.childs.cameras, sb.childs.cameras.cnt, "cam"+cam.id).then(function(cam_widget){
 
 	     console.log("Cam widget created : " + c);
 
@@ -162,7 +162,7 @@
 				message : "Requesting a new USB scan on telescope server..."
 			    });
 
-			    sb.childs.cameras.destroy_childs();
+//			    sb.childs.cameras.destroy_childs();
 			    sock.query("sbig/usb_scan",function(msg){
 				update_cam_list();
 				/* if(msg.data.error!==undefined){

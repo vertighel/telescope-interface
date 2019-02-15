@@ -67,21 +67,21 @@
 	
 	<span class="title" data-var="title"></span>
 
-	<x-widget name="camera_button" data-class="action"> </x-widget>
+	<x-widget name="camera_button" data-class="widgets/action"> </x-widget>
 
 	<!-- <strong>Temperature monitor</strong>
 	   -->
 	
     </div>
 
-    <x-widget name="temp_monitor" data-class="ti/temp_monitor"> </x-widget>
+    <x-widget name="temp_monitor" data-class="temp_monitor"> </x-widget>
     
     <div data-var="control_view" class="control_view">
 	<section data-var="controls" class="controls">
 	    
-	    <x-widget name="ccd_settings" data-class="ti/camera-ccd"></x-widget>
-	    <x-widget name="object_settings" data-class="ti/camera-object"></x-widget>
-	    <x-widget name="control_widget" data-class="ti/camera-controls"></x-widget>
+	    <x-widget name="ccd_settings" data-class="camera-ccd"></x-widget>
+	    <x-widget name="object_settings" data-class="camera-object"></x-widget>
+	    <x-widget name="control_widget" data-class="camera-controls"></x-widget>
 	</section>
 	
     </div>
@@ -89,11 +89,11 @@
 
     <div class="image_panel">
 	<strong>Last image : <span data-var="image_name"></span></strong>    
-	<x-widget name="viewer" data-class="glscreen" data-fits-file="lib/fits/ngc6934_v.fits"></x-widget>
+	<x-widget name="viewer" data-class="widgets/glscreen" data-fits-file="lib/fits/ngc6934_v.fits"></x-widget>
 
     </div>
 
-    <x-widget name="camera_console" data-class="console"> </x-widget>
+    <x-widget name="camera_console" data-class="widgets/console"> </x-widget>
 		
 </div>
 
