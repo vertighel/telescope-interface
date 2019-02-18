@@ -16,6 +16,20 @@
     </div>
   </div>
 
+
+
+  <!-- Progress bar -->
+  <div>
+    <span data-var="exposure_label">Progress</span>
+    <output data-var="exposure_output" for="exposure_progress" >0</output>%
+  </div>
+  
+  <div>
+    <div role="progressbar" data-var="exposure_progress" class="progress-bar" 
+         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+  </div>
+  
+  
   <!-- <div class="mb-2 row"> -->
   <!--   <div class="btn-group btn-group-toggle col" data-toggle="buttons"> -->
   <!--     <label class="btn btn-outline-primary btn-sm col"> -->
@@ -46,5 +60,30 @@
 <script class="builder">
  
  var cc = this;
- 
+
+ // image_data_func : function(msg){
+ //        switch(msg.data.which_progress) {
+ //        case "exposure":
+ //            $(cc.exposure_label)
+ //                .text("Exposure:");
+ //            $(cc.exposure_progress)
+ //                .css('width', msg.data.percent+'%')
+ //                .attr('aria-valuenow', msg.data.percent);
+ //            $(cc.exposure_output)
+ //                .val(msg.data.percent);
+ //            break;
+ //        case "transfer":
+ //            $(cc.exposure_label)
+ //                .text("Transfer:");
+ //            $(cc.exposure_progress)
+ //                .css('width', msg.data.percent+'%')
+ //                .attr('aria-valuenow', msg.data.percent);
+ //            $(cc.exposure_output)
+ //                .val(msg.data.percent);
+ //            break;
+ //         default:
+ //            break;
+ //        }
+ // }
+            
 </script>
