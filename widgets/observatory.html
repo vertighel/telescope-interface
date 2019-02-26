@@ -12,8 +12,8 @@
 <div>
 
   <hgroup>
-    <h2>Nunki virtual Observatory</h2>  
-    <small data-var="ident">unknown</small> 
+    <h4>Nunki virtual Observatory</h4>  
+    <h5 data-var="ident">, user unknown</h5> 
   </hgroup>
     
   <div>
@@ -33,7 +33,7 @@ function update_identity(){
     if(sm.id_data!==undefined){
         
 	if(sm.id_data.session!==undefined){
-	    $(obs.ident).html("User session: <strong>"+sm.id_data.session+"</strong>@"+sm.id_data.address);
+	    $(obs.ident).html(", user session:"+sm.id_data.session+"@"+sm.id_data.address);
 	}else{
 	    $(obs.ident).html("Not registered").addClass("text-danger");
 	}

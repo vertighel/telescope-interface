@@ -14,14 +14,20 @@
              id="temperature" value="0" min="-50.0" max="0.0" step="0.1">
       <div class="input-group-append">
           <span class="input-group-text">°C</span>
-	  <!-- <span class="input-group-text">CCD</span> -->
-          <!-- <var data-var="cooling_temp" class="input-group-text">/</var> -->
-          <!-- <span class="input-group-text">Amb</span> -->
-          <!-- <var data-var="ambient_temp" class="input-group-text">/</var> -->
       </div>
     </div>
   </div>
 
+  <div class="mb-2 row">
+    <label class="col-2 col-form-label">Info:</label>
+    <small class="form-text text-muted">
+      <span class="text-muted">CCD: </span>
+      <var data-var="cooling_temp" class="text-muted">unk</var>
+      <span class="text-muted">Amb: </span>
+      <var data-var="ambient_temp" class="text-muted">unk</var>
+    </small>
+  </div>
+  
   <div class="mb-2 row">
     <label for="frametyp" class="col-form-label col-2">Frame</label>
     <div class="col-5">
@@ -107,34 +113,43 @@
 
       cam_ccd.get_params=function(){
 	  return {
-	      cooling : { enabled : cam_ccd.cooling_enabled.checked, setpoint : cam_ccd.cooling_setpoint.value },
+	      cooling : { enabled : $(cam_ccd.cooling_enabled).prop("checked"),
+                          setpoint :$(cam_ccd.cooling_setpoint).prop("value")
+                        },
 	      subframe : [cam_ccd.x0.value, cam_ccd.xf.value, cam_ccd.y0.value, cam_ccd.yf.value],
 	  }
-      }
-      
+      }      
 
       cam_ccd.set_params=function(pars){
 	  if(pars.cooling!==undefined){
-	      if(pars.cooling.enabled !== undefined) cam_ccd.cooling_enabled.checked=pars.cooling.enabled;
-	      if(pars.cooling.setpoint !== undefined) cam_ccd.cooling_setpoint.value=Math.floor(pars.cooling.setpoint*10.0)/10.0;
+	      if(pars.cooling.enabled !== undefined)
+                  $(cam_ccd.cooling_enabled).prop("checked", pars.cooling.enabled);
+	      if(pars.cooling.setpoint !== undefined)
+                  $(cam_ccd.cooling_setpoint).prop("value", Math.floor(pars.cooling.setpoint*10.0)/10.0);
 
-	      if(pars.cooling.ccd_temp !== undefined) cam_ccd.cooling_temp.innerHTML=Math.floor(pars.cooling.ccd_temp*10)/10.0;
-	      if(pars.cooling.ambient_temp !== undefined) cam_ccd.ambient_temp.innerHTML=Math.floor(pars.cooling.ambient_temp*10)/10.0;
+	      if(pars.cooling.ccd_temp !== undefined)
+                  $(cam_ccd.cooling_temp).html(Math.floor(pars.cooling.ccd_temp*10)/10.0);
+	      if(pars.cooling.ambient_temp !== undefined)
+                  $(cam_ccd.ambient_temp).html(Math.floor(pars.cooling.ambient_temp*10)/10.0);
 	  }
 	  
 	  if(pars.subframe!==undefined){
-	      if(pars.subframe !== undefined) cam_ccd.subframe=pars.subframe;
+	      if(pars.subframe !== undefined)
+                  cam_ccd.subframe=pars.subframe;
 	  }
       }
       
       cam_ccd.cooling_enabled.addEventListener("change", function(){
 	  var cam=cam_ccd.parent.cam;
-	  cam.sock.query("sbig/set_cooling_info", { cam_id : cam.info.id, cooling_info : cam_ccd.get_params().cooling }, function(rep_data){
-	      cam_ccd.parent.debug.newline("reply received "  + JSON.stringify(rep_data));
-	  } );
-	  console.log("Change!!");
+	  cam.sock.query("sbig/set_cooling_info",
+                         { cam_id : cam.info.id,
+                           cooling_info : cam_ccd.get_params().cooling
+                         },
+                         function(rep_data){
+	                     cam_ccd.parent.debug.newline("reply received "  + JSON.stringify(rep_data));
+	                 });
+	  console.log(cam_ccd.get_params());
       });
-
 
   });
     

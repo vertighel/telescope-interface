@@ -1,17 +1,6 @@
 
 <style>
 
-.line {
-  
-    fill: none;
-    stroke: steelblue;
-    stroke-width: 1.2px;
- }
-
-.area {
-  fill: lightsteelblue;
-}
-
 </style>
 
 <svg data-var="verticalCutSvg" width="100" height="640"></svg>
@@ -21,9 +10,12 @@
 
 <script class="builder">
 
-var verticalCut=this
+var vc=this
+
+vc.data = [];
+
 /// test function to create points
-$(verticalCut.verticalCutNewSet).on("click",function(){
+$(vc.verticalCutNewSet).on("click",function(){
     var numbers = Array.from({length: 64}, () => Math.floor(Math.random()*65535 ));
     var newdatum = numbers.map(function(d,i){
         return {
@@ -32,52 +24,48 @@ $(verticalCut.verticalCutNewSet).on("click",function(){
              z : d
          }
      });
-     update(newdatum);
+     vc.update_vc(newdatum);
  };
 
-var data = [];
-
-
-var svg = d3.select(verticalCut.verticalCutSvg),
-
+vc.svg = d3.select(vc.verticalCutSvg),
     margin = {top: 20, right: 30, bottom: 40, left: 20},
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom;
 
-var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+var g = vc.svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var x = d3.scaleLinear()
+vc.x = d3.scaleLinear()
     .range([width,0])
         .domain([0, 1]); /// Just to draw
 
-var y = d3.scaleLinear()
+vc.y = d3.scaleLinear()
     .range([height, 0])
         .domain([0, 1]); /// Just to draw
 
-var xAxis = d3.axisBottom(x).ticks(3).tickFormat(d3.format("d"));
-var yAxis = d3.axisRight(y).tickFormat(d3.format("d"));
+vc.xAxis = d3.axisBottom(vc.x).ticks(3).tickFormat(d3.format("d"));
+vc.yAxis = d3.axisRight(vc.y).tickFormat(d3.format("d"));
 
 /// Define the line
 var line = d3.line()
-    .x(function(d,i) { return x(d.z); })
-    .y(function(d,i) { return y(d.y); });
+    .x(function(d,i) { return vc.x(d.z); })
+    .y(function(d,i) { return vc.y(d.y); });
 
 /// Define the area
 var area = d3.area()
     .x0(width) /// Fill from bottom
-    .x1(function(d,i) { return x(d.z); })
-    .y(function(d) { return y(d.y); });
+    .x1(function(d,i) { return vc.x(d.z); })
+    .y(function(d) { return vc.y(d.y); });
 
 /// Drawing the area
 g.append("g")
-    .datum(data)
+    .datum(vc.data)
   .append("path")
     .attr("class", "area")
     .attr("d", area);
 
 /// Drawing the line
-g.append("g") 
-    .datum(data)
+g.append("g")
+    .datum(vc.data)
   .append("path")
     .attr("class", "line")
     .attr("d", line);
@@ -85,8 +73,8 @@ g.append("g")
 /// Drawing the axes
 var xa=g.append("g")
     .attr("class", "axis axis--x")
-    .attr("transform", "translate(0," + y(0) + ")")
-    .call(xAxis)
+    .attr("transform", "translate(0," + vc.y(0) + ")")
+    .call(vc.xAxis)
   .selectAll("text")
     .style("text-anchor", "end")
     .attr("dx", "-.8em")
@@ -95,39 +83,41 @@ var xa=g.append("g")
 
 g.append("g")
     .attr("class", "axis axis--y")
-    .attr("transform", "translate("+x(0) + ",0)")
-    .call(yAxis);
+    .attr("transform", "translate("+vc.x(0) + ",0)")
+    .call(vc.yAxis);
 
 /// Updating data, line and axes
-function update(newdatum){
+function update_vc(newdatum){
 
-    data=newdatum
-    
-    x.domain(d3.extent(data, function(d){return d.z;}));
-    y.domain(d3.extent(data, function(d){return d.y;}));
-    
+    vc.data=newdatum
+
+    vc.x.domain(d3.extent(data, function(d){return d.z;}));
+    vc.y.domain(d3.extent(data, function(d){return d.y;}));
+
     /// Update axis, line, and area
     d3.select(".axis--x")
-        .call(xAxis)
+        .call(vc.xAxis)
       .selectAll("text")
         .style("text-anchor", "end")
         .attr("dx", "-.8em")
         .attr("dy", ".15em")
         .attr("transform", "rotate(-90)");
-    
+
     d3.select(".axis--y")
-        .call(yAxis);
-    
+        .call(vc.yAxis);
+
     d3.select(".line")
         .datum(newdatum)
         .attr("d", line);
-    
+
     d3.select(".area")
         .datum(newdatum)
         .attr("d", area);
-    
+
 }
- setInterval(function(){
-     vc.test();
- }, 1000);
+
+ // setInterval(function(){
+ //     vc.test();
+ // }, 1000);
+
 </script>

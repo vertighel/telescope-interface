@@ -5,6 +5,10 @@
     display:inline;
   }
 
+div{
+    background: 1px solid red;
+}
+
 </style>
 
 <div>
@@ -13,6 +17,7 @@
     <hgroup>
       <h4 data-var="title"></h4>
       <h5 data-var="subtitle"></h5>
+      <x-widget name="temp_monitor" data-class="temp_monitor"> </x-widget>
     </hgroup>
     <x-widget name="camera_button" data-class="widgets/action"> </x-widget>
   </header>
@@ -32,8 +37,7 @@
     
     <figure class="col-md">
       <x-widget name="viewer" data-class="widgets/glscreen" data-fits-file="lib/fits/ngc6934_v.fits"> </x-widget>
-      <figcaption>Last image : <span data-var="image_name"></span></figcaption>
-      <x-widget name="temp_monitor" data-class="temp_monitor"> </x-widget>
+      <figcaption>Last image: <span data-var="image_name"></span></figcaption>
     </figure>
     
   </article>
@@ -277,7 +281,9 @@ sbc.monitor_temperature=function(enable){
 		    }
 		);
 
-		sbc.childs.temp_monitor.update_temp(cool.ccd_temp);
+//		sbc.childs.temp_monitor.update_temp({x: new Date(), y: cool.ccd_temp});
+                //		sbc.childs.temp_monitor.update_temp(cool.ccd_temp);
+                
 	    });
 
 	}, 1000);

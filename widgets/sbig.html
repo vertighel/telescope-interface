@@ -1,10 +1,6 @@
 
 <style>
 
-//  nav>div{
-//    display:inline-block;
-//  }
-
   nav div>button, nav div>output{
   display:block;
   }
@@ -63,10 +59,6 @@ function fill_cam_list(cams){
     for ( var c in cams ){
 	n++;
         let cam=cams[c];
-
-	//var div=document.createElement("div");
-	//sb.childs.cameras.cnt.appendChild(div);
-	//div.innerHTML=cam.serial + " " + cam.name;
 
 	factory.create_widget("sbig_camera", sb.childs.cameras, sb.childs.cameras.cnt, "cam"+cam.id).then(function(cam_widget){
 
@@ -171,7 +163,10 @@ sock.mods.install_mod({
 				ambient_temp : cool.ambient_temp
 			    }
 			});
-			cam.childs.temp_monitor.update_temp(cool);
+
+                        // console.log(cool)
+			// cam.childs.temp_monitor.update_temp(cool);
+		        cam.childs.temp_monitor.update_temp({x: new Date(), y: cool.ccd_temp});
 		    }
 		}
 	    }
