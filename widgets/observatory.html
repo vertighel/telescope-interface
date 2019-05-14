@@ -25,22 +25,36 @@
 <script class="builder">
 
  var obs=this;
- 
-// sm.on("ident", update_identity);
-update_identity();
 
-function update_identity(){
-    if(sm.id_data!==undefined){
-        
+
+  var path=window.location.pathname.split("/");
+  console.log("PATH : " + path.length +" :" + path[1] + ", " + path[2]);
+  if(path[1]=="") path[1]="observatory";
+  console.log("Loading main widget : " + path[1]);
+
+  if(path[1]=="cam2"){
+      sm.socket_options.path="ws2";
+  }else
+      sm.socket_options.path="ws";
+
+  sm.start().then(function(){
+      
+  // sm.on("ident", update_identity);
+      update_identity();
+      
+      function update_identity(){
+	  if(sm.id_data!==undefined){
+	      
 	if(sm.id_data.session!==undefined){
 	    $(obs.ident).html(", user session:"+sm.id_data.session+"@"+sm.id_data.address);
 	}else{
 	    $(obs.ident).html("Not registered").addClass("text-danger");
 	}
-	
-	if(sm.id_data.ident!==undefined)
-	    $(obs.ident).append(" on " + sm.id_data.ident.browser.os.name);
-    }
-}
-
+	      
+	      if(sm.id_data.ident!==undefined)
+		  $(obs.ident).append(" on " + sm.id_data.ident.browser.os.name);
+	  }
+      }
+  });
+  
 </script>

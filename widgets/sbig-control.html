@@ -1,3 +1,4 @@
+<x-ids>temperature frametyp binning x0 y0 xf yf </x-ids>
 
 <section class="col-4">
 
@@ -289,21 +290,19 @@
 </section>
 
 
-  <script>
+  <script class="builder">
 
-  $(document).ready(function(){
+  console.log("SBIG-Control init");
 
-      $("#imagetyp").change(function(){
-          var ifBias = (this.value == "bias");
-          $("#exptime,.filter button").prop("disabled",ifBias)          
-      });
-
-      $("#frametyp").change(function(){
-          var ifCustom=this.value == "custom"
-	  $("#x0,#y0,#xf,#yf").prop("disabled",!ifCustom)
-      });
-
-    
+  $("#imagetyp").change(function(){
+      var ifBias = (this.value == "bias");
+      $("#exptime,.filter button").prop("disabled",ifBias)          
   });
-    
+  
+  $("#frametyp").change(function(){
+      var ifCustom=this.value == "custom"
+      $("#x0,#y0,#xf,#yf").prop("disabled",!ifCustom)
+  });
+
+
   </script>

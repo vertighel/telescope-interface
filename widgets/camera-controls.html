@@ -59,31 +59,31 @@
 
 <script class="builder">
  
- var cc = this;
-
- // image_data_func : function(msg){
- //        switch(msg.data.which_progress) {
- //        case "exposure":
- //            $(cc.exposure_label)
- //                .text("Exposure:");
- //            $(cc.exposure_progress)
- //                .css('width', msg.data.percent+'%')
- //                .attr('aria-valuenow', msg.data.percent);
- //            $(cc.exposure_output)
- //                .val(msg.data.percent);
- //            break;
- //        case "transfer":
- //            $(cc.exposure_label)
- //                .text("Transfer:");
- //            $(cc.exposure_progress)
- //                .css('width', msg.data.percent+'%')
- //                .attr('aria-valuenow', msg.data.percent);
- //            $(cc.exposure_output)
- //                .val(msg.data.percent);
- //            break;
- //         default:
- //            break;
- //        }
- // }
-            
+  var cc = this;
+  
+  this.update_progress = function(data){
+      switch(data.msg) {
+      case "expo-progress":
+	  $(cc.exposure_label)
+	      .text("Exposure:");
+	  $(cc.exposure_progress)
+	      .css('width', msg.data.percent+'%')
+	      .attr('aria-valuenow', msg.data.percent);
+            $(cc.exposure_output)
+	      .val(msg.data.percent);
+            break;
+      case "grab-progress":
+	  $(cc.exposure_label)
+	      .text("Transfer:");
+	  $(cc.exposure_progress)
+	      .css('width', msg.data.percent+'%')
+	      .attr('aria-valuenow', msg.data.percent);
+	  $(cc.exposure_output)
+	      .val(msg.data.percent);
+	  break;
+      default:
+	  break;
+      }
+  };
+  
 </script>
