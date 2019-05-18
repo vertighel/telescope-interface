@@ -1,18 +1,38 @@
 
+<x-ids> exposure-progress option1 option2 fs mode-group</x-ids>
+
+  <style>
+  .expo_status{
+    color: red;
+  }
+  </style>
+
 <fieldset class="form-group">
 
-  <div class="mb-2 row">
-    <div class="btn-group col" role="group" aria-label="First group">
-      <button type="submit" name="launch" value="video" class="btn btn-outline-secondary btn-sm col">Video</button>
-      <button type="submit" name="launch" value="snapshot" class="btn btn-outline-secondary btn-sm col">Snapshot</button>
-      <button type="submit" name="launch" value="stop" class="btn btn-outline-secondary btn-sm col">Stop</button>
+  <div  class="mb-2 row">
+    <div data-var="expo_status" class="expo_status" style="display:none;"></div>
+    <div  id="mode-group" data-var="mode_group" class="btn-group btn-group-toggle col" data-toggle="buttons">
+      <label class="btn btn-warning btn-sm active">
+	<input type="radio" name="options" value="exposure" autocomplete="off" checked> Exposure
+      </label>
+      <label class="btn btn-warning btn-sm">
+	<input type="radio" name="options" value="monitor" autocomplete="off"> Monitor
+      </label>
     </div>
   </div>
-
+  
+  <!-- <div class="mb-2 row"> -->
+  <!--   <div class="btn-group col" role="group" aria-label="First group"> -->
+  <!--     <button type="submit" name="launch" value="video" class="btn btn-outline-secondary btn-sm col">Video</button> -->
+  <!--     <button type="submit" name="launch" value="snapshot" class="btn btn-outline-secondary btn-sm col">Snapshot</button> -->
+  <!--     <button type="submit" name="launch" value="stop" class="btn btn-outline-secondary btn-sm col">Stop</button> -->
+  <!--   </div> -->
+  <!-- </div> -->
+  
   <div class="mb-2 row">
     <div class="btn-group col" role="group" aria-label="First group">
       <button data-var="expose" type="submit" name="launch" value="expose" class="btn btn-outline-secondary btn-sm col">Expose</button>
-      <button data-var="abort" type="submit" name="launch" value="abort" class="btn btn-outline-secondary btn-sm col">Abort</button>
+      <button data-var="abort" type="submit" name="launch" value="abort" class="btn btn-outline-danger btn-sm col">Abort</button>
     </div>
   </div>
 
@@ -23,11 +43,10 @@
     <span data-var="exposure_label">Progress</span>
     <output data-var="exposure_output" for="exposure_progress" >0</output>%
   </div>
-  
-  <div>
-    <div role="progressbar" data-var="exposure_progress" class="progress-bar" 
-         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+  <div style="height: 1em;" role="progressbar" id="exposure-progress" data-var="exposure_progress" class="progress-bar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
   </div>
+  
+
   
   
   <!-- <div class="mb-2 row"> -->
@@ -57,29 +76,106 @@
   <!-- </div> -->
 </fieldset>
 
+
+  
 <script class="builder">
  
   var cc = this;
-  
+
+  cc.abort.disabled=true;
+  cc.enable_controls = function(enable){
+ 
+  }
+
+  cc.expose.addEventListener("click", function(){
+      var sbc = cc.parent;
+      console.log("sbc " + sbc + " cam  " + cam);
+
+      var cam = sbc.cam;
+      cc.expo_status.style.color="blue";
+      cc.expo_status.innerHTML="Sending OB to telescope server";
+      cc.mode_group.style.display="none";
+      cc.expo_status.style.display="block";
+      cc.abort.disabled=false;
+      
+      var mgroup=$("label.active input").get(0).innerHTML;
+      var sel_mode = $("input:radio:checked").val();
+      console.log("Sel mode "+sel_mode + " mgrp " + mgroup);
+      cam.fill_ob(cam.ob_template, sbc);
+      cam.ob_template.TOTOmode="Hello";
+      cam.ob_template.mode=sel_mode;
+      sbc.debug.newline("Expose! OB=" + JSON.stringify(cam.ob_template,null,5));
+      console.log("Filled OB + " + JSON.stringify(cam.ob_template, null, 5));
+      //sbc.childs.ccd_settings
+      
+      cam.sock.query("sbig/submit_ob", { ob : cam.ob_template, cam_id : cam.info.id }, function(reply){
+	  cc.expo_status.style.color="springgreen";
+	  cc.expo_status.innerHTML="OB Complete ! " + reply.data.file_name;
+	  cc.abort.disabled=true;
+	  setTimeout(function(){
+	      cc.mode_group.style.display="block";
+	      cc.expo_status.style.display="none";
+	  },3000);
+	  
+      });
+      
+  });
+
+
+  cc.abort.addEventListener("click", function(){
+      var sbc = cc.parent;
+      console.log("sbc " + sbc + " cam  " + cam);
+
+      var cam = sbc.cam;
+      cc.expo_status.style.color="blue";
+      cc.expo_status.innerHTML="Aborting exposure...";
+      cc.mode_group.style.display="none";
+      cc.expo_status.style.display="block";
+
+      var mgroup=$("label.active input").get(0).innerHTML;
+      var sel_mode = $("input:radio:checked").val();
+      console.log("Sel mode "+sel_mode + " mgrp " + mgroup);
+      cam.fill_ob(cam.ob_template, sbc);
+      cam.ob_template.TOTOmode="Hello";
+      cam.ob_template.mode=sel_mode;
+      sbc.debug.newline("Expose! OB=" + JSON.stringify(cam.ob_template,null,5));
+      console.log("Filled OB + " + JSON.stringify(cam.ob_template, null, 5));
+      //sbc.childs.ccd_settings
+      
+      cam.sock.query("sbig/abort", { cam_id : cam.info.id }, function(reply){
+	  cc.expo_status.style.color="springgreen";
+	  cc.expo_status.innerHTML="Abort done ! ";
+	  setTimeout(function(){
+	      cc.mode_group.style.display="block";
+	      cc.expo_status.style.display="none";
+	  },3000);
+	  
+      });
+      
+  });
+
+
   this.update_progress = function(data){
+
+      var progress=data.data.progress*100.0;
+      //cc.exposure_progress.style.width=progress+'%';
+      //cc.exposure_progress.setAttribute('aria-valuenow',progress);
+      
+      //console.log("cam-control Update progress " + progress);
+      $(cc.exposure_progress)
+	  .css('width', progress+'%')
+	  .attr('aria-valuenow',progress);
+      $(cc.exposure_output)
+	  .val(progress);
+      
       switch(data.msg) {
-      case "expo-progress":
+      case "expo_progress":
 	  $(cc.exposure_label)
 	      .text("Exposure:");
-	  $(cc.exposure_progress)
-	      .css('width', msg.data.percent+'%')
-	      .attr('aria-valuenow', msg.data.percent);
-            $(cc.exposure_output)
-	      .val(msg.data.percent);
-            break;
-      case "grab-progress":
+	  break;
+      case "grab_progress":
 	  $(cc.exposure_label)
 	      .text("Transfer:");
-	  $(cc.exposure_progress)
-	      .css('width', msg.data.percent+'%')
-	      .attr('aria-valuenow', msg.data.percent);
-	  $(cc.exposure_output)
-	      .val(msg.data.percent);
 	  break;
       default:
 	  break;

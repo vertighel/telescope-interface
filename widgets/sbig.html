@@ -155,16 +155,17 @@ sock.mods.install_mod({
 			debug.newline("Cooling report error : " + cool.error);
 		    }
 		    else{
-			cam.childs.ccd_settings.set_params({
-			    cooling : {
-				//setpoint : cool.cooling_setpoint,
-				//enabled : cool.enabled,
-				ccd_temp : cool.ccd_temp,
-				ambient_temp : cool.ambient_temp
-			    }
-			});
-
-                        // console.log(cool)
+			if(cam.childs.ccd_settings!==undefined)
+			    cam.childs.ccd_settings.set_params({
+				cooling : {
+				    //setpoint : cool.cooling_setpoint,
+				    //enabled : cool.enabled,
+				    ccd_temp : cool.ccd_temp,
+				    ambient_temp : cool.ambient_temp
+				}
+			    });
+			
+			// console.log(cool)
 			// cam.childs.temp_monitor.update_temp(cool);
 		        cam.childs.temp_monitor.update_temp({x: new Date(), y: cool.ccd_temp});
 		    }
@@ -179,7 +180,7 @@ sock.mods.install_mod({
 		var cam_widget=sb.childs.cameras.childs["cam"+msg.data.data.cid];
 		if(cam_widget!==undefined){
 		    msg.data.bin_data=msg.bin_data;
-		    console.log("Message is " + JSON.stringify(msg.data) + " BIN ? " + msg.bin_data);
+		    //console.log("Message is " + JSON.stringify(msg.data) + " BIN ? " + msg.bin_data);
 		    cam_widget.cam.display_image(msg.data);
 		}
 	    }
@@ -188,6 +189,7 @@ sock.mods.install_mod({
 	case "grab_progress":
 	case "expo_progress":
 	    var cam_widget=sb.childs.cameras.childs["cam"+msg.data.data.cid];
+	    //console.log("Update progress " + +msg.data.data.progress + " widget " + cam_widget);
 	    if(cam_widget!==undefined){
 		var cw=cam_widget.childs.control_widget;
 		cw.update_progress(msg.data);

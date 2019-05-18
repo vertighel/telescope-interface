@@ -1,14 +1,13 @@
 
 <style>
 
-  hgroup h4, hgroup h5{
+hgroup h4, hgroup h5, header>hgroup,header>div {
     display:inline;
-  }
-
-div{
-    background: 1px solid red;
 }
 
+header{
+    margin-bottom: 1em;
+}
 </style>
 
 <div>
@@ -77,6 +76,7 @@ class sbig_camera{
 	var uint_data=new Uint16Array(data);
 	console.log("UINT DATA " + uint_data[0] + ", " + uint_data[1] + " W="+reply.data.width + " H= "+reply.data.height);
 
+	sbc.image_name.innerHTML=reply.bin_data.objects[0].name;
 	var img={
 	    data: new Uint16Array(data),
 	    dims : [reply.data.width,reply.data.height],
@@ -88,12 +88,12 @@ class sbig_camera{
 	if(cam.gls==undefined){
 	    sbc.childs.viewer.start().then(function(_gls){
 		cam.gls=_gls;
-		console.log("Layers L="+cam.gls.glm.layers.length);
+		//console.log("Layers L="+cam.gls.glm.layers.length);
 
-		console.log("Creating LAYER !");
+		//console.log("Creating LAYER !");
 
 		cam.gls.glm.create_layer(img).then(function(layer){
-		    console.log("---------------->create layer OK");
+		  //  console.log("---------------->create layer OK");
 		    cam.gls.glm.render();
 		}).catch(function(e){
 		    console.error(e);
@@ -129,55 +129,10 @@ class sbig_camera{
 	    cam.sock.query("sbig/get_last_image", { cam_id : cam.info.id }, function(reply){
 		console.log("LAST image received reply!");
 		if(reply.data.error===undefined)
-		    ;//cam.display_image(reply);
+		    cam.display_image(reply);
 	    });
 	}, 1500);
-
-	sbc.childs.control_widget.expose.addEventListener("click", function(){
-
-	    cam.fill_ob(sbc.cam.ob_template, sbc);
-	    sbc.debug.newline("Expose! OB=" + JSON.stringify(cam.ob_template,null,5));
-	    console.log("Filled OB + " + JSON.stringify(cam.ob_template, null, 5));
-	    //sbc.childs.ccd_settings
-
-	    cam.sock.query("sbig/submit_ob", { ob : cam.ob_template, cam_id : cam.info.id }, function(reply){
-		//console.log("Got OB reply !" + JSON.stringify(reply));
-		//cam.display_image(reply);
-
-		/* var uint_data=new Uint16Array(reply.bin_data.objects[0].data);
-		   console.log("UINT DATA " + uint_data[0] + ", " + uint_data[1]);
-		   var img={
-		   data: new Uint16Array(reply.bin_data.objects[0].data),
-		    dims : [reply.data.width,reply.data.height],
-		    width : reply.data.width,
-		    heigth : reply.data.height,
-		    ext : [0, 2000]
-		    };
-		    if(gls==undefined){
-		    sbc.childs.viewer.start().then(function(_gls){
-		    gls=_gls;
-		    console.log("Layers L="+gls.glm.layers.length);
-
-		    console.log("Creating LAYER !");
-
-		    gls.glm.create_layer(img).then(function(layer){
-		    console.log("---------------->create layer OK");
-		    gls.glm.render();
-		    }).catch(function(e){
-		    console.error(e);
-		    });
-		    });
-		    }else{
-
-		    var layer = gls.glm.layers[0];
-		    layer.setup_image(img);
-		    gls.glm.render();
-		    }*/
-
-	    });
-
-	});
-    }
+    }	
 
     ////////////////////// Use:
     use(cb){
