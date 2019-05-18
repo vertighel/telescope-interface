@@ -2,7 +2,7 @@
 <style>
 
   nav div>button, nav div>output{
-  display:block;
+    display:block;
   }
 
 </style>
@@ -56,6 +56,7 @@ var debug=sb.childs.sbig_console;
 function fill_cam_list(cams){
     var n=0;
     sb.childs.cameras.clear();
+
     for ( var c in cams ){
 	n++;
         let cam=cams[c];
