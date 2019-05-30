@@ -100,15 +100,17 @@
 <script class="builder">
 
  var cam_ccd=this;
- 
+
+console.log(cam_ccd)
+
   $(document).ready(function(){
       
-      $(cam_ccd.frametyp).change(function(){
+      $(cam_ccd.frametyp).on("load,change",function(){
 	  var ifCustom=this.value == "custom";
 	  cam_ccd.subframe.style.display=ifCustom ? "":"none";
 	  $("#x0,#y0,#xf,#yf").prop("disabled",!ifCustom)
 
-	  console.log("P="+JSON.stringify(cam_ccd.get_ccd_params()));
+	  console.log("P="+JSON.stringify(cam_ccd.get_params()));
       });
 
       cam_ccd.get_params=function(){
