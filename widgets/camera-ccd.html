@@ -27,14 +27,14 @@
       <var data-var="ambient_temp" class="text-muted">unk</var>
     </small>
   </div>
-  
+
   <div class="mb-2 row">
     <label for="frametyp" class="col-form-label col-2">Frame</label>
     <div class="col-5">
       <select data-var="frametyp" id="frametyp" name="frametyp" class="form-control">
-        <option value="full" selected>Full</option>
+        <option value="custom" selected>Custom</option>
+        <option value="full" >Full</option>
         <option value="crop">Crop</option>
-        <option value="custom">Custom</option>
       </select>
     </div>
     <label for="binning" class="col-2 col-form-label">Binning</label>
@@ -52,15 +52,15 @@
     <label for="x0" class="col-1 col-form-label">X<sub>0</sub></label>
     <label for="y0" class="col-1 col-form-label">Y<sub>0</sub></label>
     <div class="col input-group input-group-sm">
-      <input data-var="x0" class="form-control" type="number" name="x0"
-             id="x0" value="123" min="1" max="1024" step="1">
+      <input data-var="x_init" class="form-control" type="number" name="x0"
+             id="x0" value="11" min="1" max="1024" step="1">
       <div class="input-group-append">
         <span class="input-group-text">px</span>
       </div>
     </div>
     <div class="col input-group input-group-sm">
-      <input data-var="y0" class="form-control" type="number" name="y0"
-             id="y0" value="456" min="2" max="1024" step="1">
+      <input data-var="y_init" class="form-control" type="number" name="y0"
+             id="y0" value="22" min="2" max="1024" step="1">
       <div class="input-group-append">
         <span class="input-group-text">px</span>
       </div>
@@ -72,29 +72,29 @@
     <label for="yf" class="col-1 col-form-label">Y<sub>f</sub></label>
     <div class="col input-group input-group-sm">
 
-      <input data-var="xf" class="form-control" type="number" name="xf"
-             id="xf" value="123" min="1" max="1024" step="1">
+      <input data-var="x_final" class="form-control" type="number" name="xf"
+             id="xf" value="111" min="1" max="1024" step="1">
       <div class="input-group-append">
         <span class="input-group-text">px</span>
       </div>
     </div>
     <div class="col input-group input-group-sm">
-      <input data-var="yf" class="form-control" type="number" name="y0"
-             id="yf" value="456" min="2" max="1024" step="1">
+      <input data-var="y_final" class="form-control" type="number" name="yf"
+             id="yf" value="222" min="2" max="1024" step="1">
       <div class="input-group-append">
         <span class="input-group-text">px</span>
       </div>
     </div>
   </div>
   </div>
-  
+
   <!-- <div class="row"> -->
   <!--   <strong class="col-2">Info:</strong> -->
   <!--   <small class="text-muted">Max: <var>1024</var>×<var>1024</var> px</small> -->
   <!--   <small class="text-muted">Width: <var>800</var> px</small> -->
   <!--   <small class="text-muted">Height: <var>600</var> px</small> -->
   <!-- </div> -->
-  
+
 </fieldset>
 
 <script class="builder">
@@ -104,23 +104,30 @@
 console.log(cam_ccd)
 
   $(document).ready(function(){
-      
-      $(cam_ccd.frametyp).on("load,change",function(){
+
+      $(cam_ccd.frametyp).on("change",function(){
 	  var ifCustom=this.value == "custom";
-	  cam_ccd.subframe.style.display=ifCustom ? "":"none";
+	  cam_ccd.subframe.style.display=ifCustom ? "block":"none";
 	  $("#x0,#y0,#xf,#yf").prop("disabled",!ifCustom)
+          if(ifCustom){
+              var subframe =[cam_ccd.x_init.value,
+                             cam_ccd.x_final.value,
+                             cam_ccd.y_init.value,
+                             cam_ccd.y_final.value]
+          }
+
+          cam_ccd.get_params=function(){
+	      return {
+	          cooling : { enabled : $(cam_ccd.cooling_enabled).prop("checked"),
+                              setpoint :$(cam_ccd.cooling_setpoint).prop("value")
+                            },
+	          subframe : subframe
+	      }
+          }
 
 	  console.log("P="+JSON.stringify(cam_ccd.get_params()));
       });
 
-      cam_ccd.get_params=function(){
-	  return {
-	      cooling : { enabled : $(cam_ccd.cooling_enabled).prop("checked"),
-                          setpoint :$(cam_ccd.cooling_setpoint).prop("value")
-                        },
-	      subframe : [cam_ccd.x0.value, cam_ccd.xf.value, cam_ccd.y0.value, cam_ccd.yf.value],
-	  }
-      }      
 
       cam_ccd.set_params=function(pars){
 	  if(pars.cooling!==undefined){
@@ -134,13 +141,12 @@ console.log(cam_ccd)
 	      if(pars.cooling.ambient_temp !== undefined)
                   $(cam_ccd.ambient_temp).html(Math.floor(pars.cooling.ambient_temp*10)/10.0);
 	  }
-	  
-	  if(pars.subframe!==undefined){
-	      if(pars.subframe !== undefined)
-                  cam_ccd.subframe=pars.subframe;
+
+	  if(pars.subframe !== undefined){
+              cam_ccd.subframe=pars.subframe;
 	  }
       }
-      
+
       cam_ccd.cooling_enabled.addEventListener("change", function(){
 	  var cam=cam_ccd.parent.cam;
 	  cam.sock.query("sbig/set_cooling_info",
@@ -154,5 +160,5 @@ console.log(cam_ccd)
       });
 
   });
-    
+
 </script>
