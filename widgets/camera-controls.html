@@ -104,8 +104,9 @@
       cam.fill_ob(cam.ob_template, sbc);
       cam.ob_template.TOTOmode="Hello";
       cam.ob_template.mode=sel_mode;
-      sbc.debug.newline("Expose! OB=" + JSON.stringify(cam.ob_template,null,5));
-      console.log("Filled OB + " + JSON.stringify(cam.ob_template, null, 5));
+      sbc.debug.newline("NEW OB=" + JSON.stringify(cam.ob_template,null,5));
+
+      console.log("Sending new Observation block to server : " + JSON.stringify(cam.ob_template, null, 5));
       //sbc.childs.ccd_settings
       
       cam.sock.query("sbig/submit_ob", { ob : cam.ob_template, cam_id : cam.info.id }, function(reply){
