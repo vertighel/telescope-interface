@@ -21,16 +21,16 @@ $(vc.verticalCutNewSet).on("click",function(){
         return {
             x : Math.floor(i/(64/4)), // 4 lines
             y : i,
-             z : d
-         }
-     });
-     vc.update_vc(newdatum);
- };
+            z : d
+        }
+    });
+    update_vc(newdatum);
+});
 
 vc.svg = d3.select(vc.verticalCutSvg),
     margin = {top: 20, right: 30, bottom: 40, left: 20},
-    width = +svg.attr("width") - margin.left - margin.right,
-    height = +svg.attr("height") - margin.top - margin.bottom;
+    width = +vc.svg.attr("width") - margin.left - margin.right,
+    height = +vc.svg.attr("height") - margin.top - margin.bottom;
 
 var g = vc.svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -91,8 +91,8 @@ function update_vc(newdatum){
 
     vc.data=newdatum
 
-    vc.x.domain(d3.extent(data, function(d){return d.z;}));
-    vc.y.domain(d3.extent(data, function(d){return d.y;}));
+    vc.x.domain(d3.extent(vc.data, function(d){return d.z;}));
+    vc.y.domain(d3.extent(vc.data, function(d){return d.y;}));
 
     /// Update axis, line, and area
     d3.select(".axis--x")

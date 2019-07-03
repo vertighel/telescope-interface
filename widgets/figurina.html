@@ -1,0 +1,73 @@
+<style>
+
+</style>
+
+
+<!-- Test textarea and button -->
+
+<!-- <textarea data-var="testFig" rows="6" cols="40"> -->
+<!--     { -->
+<!--         "png":"2018-01-29T06:20:58.png", -->
+<!--         "object":"test figurina", -->
+<!--         "date-obs":"2018-01-29T06:20:58", -->
+<!--         "jd":2458147.76457 , -->
+<!--         "imagetyp":"light" -->
+<!--     }  -->
+<!-- </textarea> -->
+
+    <!-- <button data-var="figurinaTest" class="btn btn-secondary">change</button> -->
+
+    <figure class="card" data-var="card">
+      <img data-var="cardImg" class="card-img-top rounded" src="">
+      <figcaption class="card-body">
+        <h5 data-var="cardTitle" class="card-title">title</h5>
+       
+        <dl data-var="cardList" class="row">
+        </dl>
+
+        <button type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+          FITS
+        </button>
+        
+      </figcaption>
+    </figure>
+
+
+<script class="builder">
+
+var figurina=this;
+
+/// Test data. click to update
+$(figurina.figurinaTest).on("click",function(){
+    var d=JSON.parse($(figurina.testFig).val())
+    console.log(d)
+    var c= ['png','jd','imagetyp']
+    this.generate_figurina(d)
+})
+
+figurina.generate_figurina = function(data){
+    console.log(data)
+
+    let {object,path, ...sliceddata} = data; // slicing the property object from the rest. cool!
+
+    d3.select(figurina.cardImg).attr("src",path+data.png)
+    d3.select(figurina.cardTitle).html(object)
+
+    figurina.pairlist = d3.entries(sliceddata); // [{"key":"term1", "value":"definition1"}, etc... ]
+    
+    figurina.dl = d3.select(figurina.cardList).html( new Array(figurina.pairlist.length + 1).join("<dt/><dd/>") );
+    
+    figurina.dl.selectAll("dt")
+        .data(figurina.pairlist)
+        .html(function(d) { return d.key; })
+        .attr("class","col-4")
+
+    figurina.dl.selectAll("dd")
+        .data(figurina.pairlist)
+        .html(function(d) { return d.value; })
+        .attr("class","col-8")
+    
+}
+
+
+</script>

@@ -1,4 +1,18 @@
 
+
+
+<!-- Test textarea and button -->
+<textarea data-var="testData" rows="4" cols="50">
+  [
+    {        "a":1,        "b":2,        "c":3,        "d":4    },
+    {        "a":1,        "b":2,        "c":3,        "d":4    },
+    {        "a":1,        "b":2,        "c":3,        "d":4    },
+    {        "a":1,        "b":2,        "c":3,        "d":4    }
+  ]
+</textarea>
+<button data-var="tableTest" class="btn btn-secondary">change</button>
+
+
 <table data-var="table" class="table table-striped table-sm">
   <thead data-var="thead"></thead>
   <tbody data-var="tbody"></tbody>
@@ -6,65 +20,64 @@
 
 <script class="builder">
 
- var tbl=this;
- 
- $(document).ready(function(){
-     
-     var d=[
-	 {        a:1,        b:2,        c:3,        d:4,    },
-	 {        a:1,        b:2,        c:3,        d:4,    },
-	 {        a:1,        b:2,        c:3,        d:4,    },
-	 {        a:1,        b:2,        c:3,        d:4,    },
-     ]
-     
-     var c= ['a','b','c']
-     
-     tabulate(d,c)
-     
-     /// D3 devi morire
-     function tabulate(data, columns){
-	 
-	 var table = d3.select(tbl.table);
-	 var thead = d3.select(tbl.thead);
-	 var tbody = d3.select(tbl.tbody);
-	 thead.attr('scope','col');
-	 
-	 // Header
-	 var th =thead.selectAll('th').data(columns);
-	 th.exit().remove();
-	 th.enter()
-           .append("th")
-           .merge(th)
-           .text(function(d){return d });
-	 
-	 // Rows
-	 var rows =tbody.selectAll('tr').data(data);
-	 rows.exit().remove();
-	 rows.enter()
-             .append('tr')
-             .merge(rows)
-             .attr('data-row', function(d,i){return i });
-	 
-	 // Cells
-	 var cells = tbody.selectAll('tr')
-			  .data(data)
-			  .selectAll('td')
-			  .data(function (row) {
-			      return columns.map(function (column) {
-				  return {column: column, value: row[column]};
-			      });
-			  });
-	 
-	 cells.exit().remove();
-	 cells.enter()
-              .append("td")
-              .merge(cells)
-              .attr('data-col',function(d,i){return i })
-              .attr('data-key',function(d,i){return d.column })
-              .text(function(d,i){return d.value });
-	 
-	 return table;
-     }
-});
+var tbl=this;
+
+
+/// Test data. click to update
+$(tbl.tableTest).on("click",function(){
+    var d=JSON.parse($(tbl.testData).val())
+    console.log(d)    
+    var c= ['a','b','c']
+    tabulate(d,c)     
+})
+
+/// D3 devi morire
+function tabulate(data, columns){
+
+    console.log("called")
+    
+    var table = d3.select(tbl.table);
+    var thead = d3.select(tbl.thead);
+    var tbody = d3.select(tbl.tbody);
+    thead.attr('scope','col');
+    
+    // Header
+    var th =thead.selectAll('th').data(columns);
+    th.exit().remove();
+    th.enter()
+        .append("th")
+        .merge(th)
+        .text(function(d){return d });
+    
+    // Rows
+    var rows =tbody.selectAll('tr').data(data);
+    rows.exit().remove();
+    rows.enter()
+        .append('tr')
+        .merge(rows)
+        .attr('data-row', function(d,i){return i });
+    
+    // Cells
+    var cells = tbody.selectAll('tr')
+	.data(data)
+	.selectAll('td')
+	.data(function (row) {
+	    return columns.map(function (column) {
+		return {column: column, value: row[column]};
+	    });
+	});
+    
+    cells.exit().remove();
+    cells.enter()
+        .append("td")
+        .merge(cells)
+        .attr('data-col',function(d,i){return i })
+        .attr('data-key',function(d,i){return d.column })
+        .text(function(d,i){return d.value });
+    
+    return table;
+}
+
+//});
 
 </script>
