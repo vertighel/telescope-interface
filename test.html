@@ -1,0 +1,110 @@
+<!doctype html>
+<title>Telescope interface</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- bootstrap.css, jquery, popper, bootstrap.js -->
+<link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+<script src="./node_modules/jquery/dist/jquery.min.js"></script>
+<script src="./node_modules/popper.js/dist/umd/popper.min.js"></script>
+<script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<!-- Widget Engine -->
+<script src="./node_modules/widget_engine/lib/js/xhr.js"></script>
+<script src="./node_modules/widget_engine/lib/js/widget_engine.js"></script>
+
+<!-- d3 -->
+<script src="./node_modules/d3/dist/d3.min.js"></script>
+
+<!-- this -->
+<style>
+  /* Generated using sass --watch style.scss:style.css */
+  /* @import url("./style.css"); */
+</style>
+
+<body>
+
+<style>
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.2px;
+}
+
+.area {
+  fill: lightsteelblue;
+}
+
+</style>
+
+
+<!-- Test textarea and button -->
+<textarea data-var="testData" rows="4" cols="100">
+  [
+  {"png":"2018-01-29T06:20:58.png", "date-obs":"2018-01-29T06:20:58", "jd":2458147.76457 , "imagetyp":"light"}, 
+  {"png":"2018-01-29T06:22:05.png", "date-obs":"2018-01-29T06:22:05", "jd":2458147.765346, "imagetyp":"light"},
+  {"png":"2018-01-29T06:23:13.png", "date-obs":"2018-01-29T06:23:13", "jd":2458147.766124, "imagetyp":"light"},
+  {"png":"2018-01-29T06:24:20.png", "date-obs":"2018-01-29T06:24:20", "jd":2458147.766901, "imagetyp":"light"},
+  {"png":"2018-01-29T06:25:27.png", "date-obs":"2018-01-29T06:25:27", "jd":2458147.767678, "imagetyp":"light"},
+  {"png":"2018-01-29T06:26:34.png", "date-obs":"2018-01-29T06:26:34", "jd":2458147.768455, "imagetyp":"light"},
+  {"png":"2018-01-29T06:27:41.png", "date-obs":"2018-01-29T06:27:41", "jd":2458147.769233, "imagetyp":"light"},
+  {"png":"2018-01-29T06:28:48.png", "date-obs":"2018-01-29T06:28:48", "jd":2458147.770009, "imagetyp":"light"},
+  {"png":"2018-01-29T06:29:55.png", "date-obs":"2018-01-29T06:29:55", "jd":2458147.770787, "imagetyp":"light"},
+  {"png":"2018-01-29T06:31:03.png", "date-obs":"2018-01-29T06:31:03", "jd":2458147.771563, "imagetyp":"light"},
+  {"png":"2018-01-29T06:32:10.png", "date-obs":"2018-01-29T06:32:10", "jd":2458147.772341, "imagetyp":"light"},
+  {"png":"2018-01-29T06:33:17.png", "date-obs":"2018-01-29T06:33:17", "jd":2458147.773117, "imagetyp":"light"},
+  {"png":"2018-01-29T06:34:24.png", "date-obs":"2018-01-29T06:34:24", "jd":2458147.773895, "imagetyp":"light"},
+  {"png":"2018-01-29T06:35:31.png", "date-obs":"2018-01-29T06:35:31", "jd":2458147.774672, "imagetyp":"light"},
+  {"png":"2018-01-29T06:36:38.png", "date-obs":"2018-01-29T06:36:38", "jd":2458147.77545 , "imagetyp":"light"},
+  {"png":"2018-01-29T06:37:45.png", "date-obs":"2018-01-29T06:37:45", "jd":2458147.776226, "imagetyp":"light"},
+  {"png":"2018-01-29T06:38:53.png", "date-obs":"2018-01-29T06:38:53", "jd":2458147.777003, "imagetyp":"light"}   
+  ]
+</textarea>
+    
+<button data-var="tableTest" class="btn btn-secondary">change</button>
+
+<div class="container-fluid">
+<div class="row" data-var="containerTest">
+</div>
+</div>
+
+
+
+<script class="builder">
+
+
+var test=this;
+
+/// Test data. click to update
+$(test.tableTest).on("click",function(){
+    var d=JSON.parse($(test.testData).val())
+    console.log(d)
+    var c= ['date-obs','jd','png']
+    grid_figurine(d,c)
+})
+
+/// D3 devi morire
+function grid_figurine(data, columns){
+
+    var idx=0
+    data.forEach(function(d){
+//        console.log(d)
+        var wname="W"+(idx++);
+        var div=document.createElement("div"); test.containerTest.appendChild(div);
+        $(div).addClass("p-1 col-xl-2 col-lg-3 col-md-4 col-sm-6")
+        
+        if (d.object==undefined) d.object=wname
+        if (d.path==undefined) d.path="./images/png/"
+        
+        factory.create_widget("figurina", test, div, wname).then(function(child){
+            child.create(d);
+//            $(child.card).addClass("p-0 col-xl-2 col-lg-3 col-md-4 col-sm-6")
+        });
+        
+    });
+
+}
+
+  
+</script>
