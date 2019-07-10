@@ -1,8 +1,9 @@
 <style>
+
 </style>
 
-<button data-var="test" class="btn btn-secondary">test</button>
-
+<!-- <button data-var="test" class="btn btn-secondary">test</button> -->
+ 
 <div class="container-fluid">
   <div class="row" data-var="container">
   </div>
@@ -37,10 +38,8 @@ figurine.create = function(data, columns){
 /////////////////////////////////////////
 /// Test. 
 /// Uncomment the test button and click.
-
-$(figurine.test).on("click",function(){
     
-var d=[
+figurine.d=[
     {"png":"2018-01-29T06:20:58.png", "binning":1, "date-obs":"2018-01-29T06:20:58", "jd":2458147.76457 , "imagetyp":"raw"}, 
     {"png":"2018-01-29T06:22:05.png", "binning":2, "date-obs":"2018-01-29T06:22:05", "jd":2458147.765346, "imagetyp":"bias"},
     {"png":"2018-01-29T06:23:13.png", "binning":3, "date-obs":"2018-01-29T06:23:13", "jd":2458147.766124, "imagetyp":"flat"},
@@ -49,8 +48,10 @@ var d=[
     {"png":"2018-01-29T06:26:34.png", "binning":3, "date-obs":"2018-01-29T06:26:34", "jd":2458147.768455, "imagetyp":"light"},
     {"png":"2018-01-29T06:27:41.png", "binning":1, "date-obs":"2018-01-29T06:27:41", "jd":2458147.769233, "imagetyp":"arcs"}
 ]
+
+$(figurine.test).on("click",function(){
     
-    figurine.create(d)
+    figurine.create(figurine.d)
     
 })
 

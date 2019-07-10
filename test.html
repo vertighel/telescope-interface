@@ -39,7 +39,7 @@
 </style>
 
 <div class="container-fluid">    
-<!-- <button data-var="test" class="btn btn-secondary">test</button> -->
+<button data-var="test" class="btn btn-secondary">test</button>
 
 
 <x-widget name="figurine" data-class="figurine"></x-widget>
@@ -58,6 +58,8 @@ var test=this;
 
 $(test.test).on("click",function(){
 console.log("test page test button clicked.")
+
+test.childs.figurine.create(test.childs.figurine.d)
 
 })
 
