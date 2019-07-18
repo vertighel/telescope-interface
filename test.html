@@ -41,8 +41,11 @@
 <div class="container-fluid">    
 <button data-var="test" class="btn btn-secondary">test</button>
 
+<!-- <x-widget name="figurine" data-class="figurine"></x-widget> -->
 
-<x-widget name="figurine" data-class="figurine"></x-widget>
+<x-widget name="testWidget" data-class="camera-ccd"></x-widget>
+
+<!-- <x-widget name="testLine" data-var="testLine" data-class="simple-line"></x-widget> -->
 
 </div>
 
@@ -59,7 +62,10 @@ var test=this;
 $(test.test).on("click",function(){
 console.log("test page test button clicked.")
 
-test.childs.figurine.create(test.childs.figurine.d)
+//test.childs.figurine.create(test.childs.figurine.d)
+
+
+test.childs.testWidget.childs.tempMonitor.update({x:new Date(), y:Math.random()})
 
 })
 

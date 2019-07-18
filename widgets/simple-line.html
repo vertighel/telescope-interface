@@ -13,25 +13,19 @@
 
 </style>
 
-<svg data-var="simpleLineSvg" width="160" height="130"></svg>
+<!-- <button data-var="test" class="btn btn-secondary">test</button> -->
 
-<button data-var="simpleLineNewPoint" class="btn btn-secondary">point</button>
+<svg data-var="simpleLineSvg" width="160" height="36"></svg>
 
 <script class="builder">
 
 var simpleLine=this;
 
-/// test function to create points
-$(simpleLine.simpleLineNewPoint).on("click",function(){
-    var newdatum = {x:new Date(), y:Math.random()};
-    update(newdatum);    
-});
-
-var n = 10; /// Max number of data points in the chart
-var data = [];
+simpleLine.n = 20; /// Max number of data points in the chart
+simpleLine.data = [];
 
 var svg = d3.select(simpleLine.simpleLineSvg),
-    margin = {top: 2, right: 2, bottom: 2, left: 4},
+    margin = {top: 0, right: 2, bottom: 1, left: 2},
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom;
 
@@ -62,14 +56,14 @@ var area = d3.area()
 /// Drawing the area
 g.append("g")
   .append("path")
-    .datum(data)
+    .datum(simpleLine.data)
     .attr("class", "area")
     .attr("d", area);
 
 /// Drawing the line
 g.append("g")
   .append("path")
-    .datum(data)
+    .datum(simpleLine.data)
     .attr("class", "line")
     .attr("d", line);
 
@@ -84,15 +78,15 @@ g.append("g")
     .call(yAxis);
 
 /// Updating data, line and axes
-function update(newdatum){
-    data.push(newdatum); /// Push a new datum in the array.
+simpleLine.update = function (newdatum){
+    simpleLine.data.push(newdatum); /// Push a new datum in the array.
     
-    if (data.length > n){
-        data.shift(); /// Pop the old data point off the front.
+    if (simpleLine.data.length > simpleLine.n){
+        simpleLine.data.shift(); /// Pop the old data point off the front.
     }
     
-    x.domain(d3.extent(data, function(d){return d.x;}));
-    y.domain(d3.extent(data, function(d){return d.y;}));
+    x.domain(d3.extent(simpleLine.data, function(d){return d.x;}));
+    y.domain(d3.extent(simpleLine.data, function(d){return d.y;}));
     
     /// Update axis, line, and area
     d3.select(".axis--x")
@@ -108,5 +102,11 @@ function update(newdatum){
         .attr("d", area);
     
 }
+
+/// test function to create points
+$(simpleLine.test).on("click",function(){
+    var newdatum = {x:new Date(), y:Math.random()};
+    simpleLine.update(newdatum);
+});
 
 </script>

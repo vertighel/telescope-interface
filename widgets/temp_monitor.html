@@ -1,34 +1,29 @@
-
 <style>
- 
+
 </style>
-
-<svg data-var="simpleLineSvg" width="160" height="60"></svg>
-
 <!-- 
-<button data-var="simpleLineNewPoint" class="btn btn-secondary">point</button>
+<button data-var="test" class="btn btn-secondary">test</button>
  -->
+
+    <svg data-var="simpleLineSvg"
+width="120" height="36" viewBox="0 0 120 36"
+         ></svg>
 
 <script class="builder">
 
 var tm=this;
 
 tm.data = [];
-tm.n = 10; /// Max number of data points in the chart
-
-/// test function to create points
-$(tm.simpleLineNewPoint).on("click",function(){
-    var newdatum = {x:new Date(),
-                    y:Math.random()
-                   };
-    tm.update_temp(newdatum);
-});
+tm.n = 15; /// Max number of data points in the chart
     
+var svg = d3.select(tm.simpleLineSvg)
 
-var svg = d3.select(tm.simpleLineSvg),
-    margin = {top: 12, right: 2, bottom: 12, left: 40},
-    width = +svg.attr("width") - margin.left - margin.right,
-    height = +svg.attr("height") - margin.top - margin.bottom;
+var margin = {top: 1, right: 2, bottom: 1, left: 25}
+var width = +svg.attr("width") - margin.left - margin.right
+var height = +svg.attr("height") - margin.top - margin.bottom;
+
+// svg.attr("viewBox", [0, 0, (width + margin.right + margin.left),
+//                       (height + margin.top + margin.bottom)].join(' '))
 
 var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -41,7 +36,7 @@ tm.y = d3.scaleLinear()
         .domain([-1, 1]); /// Just to draw
 
 tm.xAxis = d3.axisBottom(tm.x).ticks(2).tickFormat(d3.timeFormat(":%S")) //.tickValues(0);
-tm.yAxis = d3.axisLeft(tm.y).ticks(2).tickFormat(d3.format(".1f")); //.tickValues(0);
+tm.yAxis = d3.axisLeft(tm.y).ticks(1).tickFormat(d3.format(".1f")); //.tickValues(0);
 
 /// Define the line
 var line = d3.line()
@@ -79,7 +74,7 @@ g.append("g")
     .call(tm.yAxis);
 
 /// Updating data, line and axes
-tm.update_temp=function(newdatum){
+tm.update=function(newdatum){
 //    console.log(newdatum)
     tm.data.push(newdatum); /// Push a new datum in the array.
     
@@ -104,5 +99,13 @@ tm.update_temp=function(newdatum){
         .attr("d", area);
     
 }
+
+/// test function to create points
+$(tm.test).on("click",function(){
+    var newdatum = {x:new Date(),
+                    y:Math.random()
+                   };
+    tm.update(newdatum);
+});
 
 </script>
