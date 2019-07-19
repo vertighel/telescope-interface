@@ -1,0 +1,94 @@
+<style>
+  
+</style>
+
+<fieldset class="form-group">
+
+  <div data-var="subframe">
+
+    <div class="row">
+      <label for="alpha" class="col-1 col-form-label">&alpha;</label>
+      <label for="delta" class="col-1 col-form-label">&delta;</label>
+      <div class="col input-group mb-2">
+        <input data-var="alpha" class="form-control" name="alpha"
+               id="alpha" value="+ 00 00 00.0" >
+        <input data-var="delta" class="form-control" name="delta"
+               id="delta" value="+ 00 00 00.0" >
+      </div>
+    </div>
+
+    <div class="row">      
+      <label for="offsetalpha" class="col-1 col-form-label">&Delta;<sub>&alpha;</sub></label>
+      <label for="offsetdelta" class="col-1 col-form-label">&Delta;<sub>&delta;</sub></label>
+      <div class="col input-group mb-2">
+        <input data-var="offsetalpha" class="form-control" name="offsetalpha"
+               id="offsetalpha" value="0.0" >
+        <input data-var="offsetdelta" class="form-control" name="offsetdelta"
+               id="offsetdelta" value="0.0" >
+        <div class="input-group-append" id="button-addon4">
+          <span class="input-group-text">′′</span>
+        </div>   
+      </div>
+    </div>
+    
+  </div>
+
+  <div class="row">
+      <label for="epoch" class="col-2 col-form-label">Epoch</label>
+      <div class="col input-group mb-2">
+        <input type="number" class="form-control" placeholder="Epoch">
+        <div class="input-group-append" id="button-addon4">
+          <button class="btn btn-outline-secondary" type="button">J2000</button>
+          <button class="btn btn-outline-secondary" type="button">now</button>
+        </div>   
+      </div>   
+  </div>   
+
+  <div class="mb-2 row">
+    <label for="dome" class="col-2 col-form-label">Dome</label>
+    <div class="col input-group">
+      <div class="input-group-prepend">
+        <div class="input-group-text custom-checkbox">
+            <input data-var="dome_auto" type="checkbox"  class="custom-control-checkbox">
+        </div>
+      </div>
+      <input data-var="dome" class="form-control" type="number"  name="dome"
+             id="dome" value="359.0" min="0.0" max="359.0" step="0.1">
+      <div class="input-group-append">
+          <span class="input-group-text">°</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-2 row">
+    <label for="derot" class="col-2 col-form-label">Derot</label>
+    <div class="col input-group">
+      <div class="input-group-prepend">
+        <div class="input-group-text custom-checkbox">
+            <input data-var="derot_auto" type="checkbox"  class="custom-control-checkbox">
+        </div>
+      </div>
+      <input data-var="derot" class="form-control" type="number"  name="derot"
+             id="derot" value="359.0" min="0.0" max="359.0" step="0.1">
+      <div class="input-group-append">
+          <span class="input-group-text">°</span>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  
+  <!-- <div class="row"> -->
+  <!--   <strong class="col-2">Info:</strong> -->
+  <!--   <small class="text-muted">Max: <var>1024</var>×<var>1024</var> px</small> -->
+  <!--   <small class="text-muted">Width: <var>800</var> px</small> -->
+  <!--   <small class="text-muted">Height: <var>600</var> px</small> -->
+  <!-- </div> -->
+
+</fieldset>
+
+<script class="builder">
+
+</script>

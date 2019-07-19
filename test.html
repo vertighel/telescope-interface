@@ -38,34 +38,52 @@
 
 </style>
 
-<div class="container-fluid">    
+<div class="container-fluid">
 <button data-var="test" class="btn btn-secondary">test</button>
+<div class="row">  
+<div class="col-4">
 
-<!-- <x-widget name="figurine" data-class="figurine"></x-widget> -->
+  <!-- <x-widget name="figurine" data-class="figurine"></x-widget> -->
 
-<x-widget name="testWidget" data-class="camera-ccd"></x-widget>
+  <x-widget name="cameraCcd" data-class="camera-ccd"></x-widget>
+  
+  <x-widget name="telescopeControl" data-class="telescope-controls"></x-widget>
+  
+  <!-- <x-widget name="testLine" data-var="testLine" data-class="simple-line"></x-widget> -->
+  
+  <!-- <x-widget name="testLine" data-class="observatory"></x-widget> -->
+</div>
 
-<!-- <x-widget name="testLine" data-var="testLine" data-class="simple-line"></x-widget> -->
+
+<div class="col">
+  
+  <x-widget name="telescopeControl" data-class="../old/slider.1"></x-widget>
+  
+</div>
 
 </div>
+</div>
+
+
+
 
 <script class="builder">
 
 
-var test=this;
+//var test=this;
 
 
 ///////////////////////////////////////////
 /// Test. 
 /// Uncomment the test button and click it.
 
-$(test.test).on("click",function(){
+$(this.test).on("click",function(){
 console.log("test page test button clicked.")
 
-//test.childs.figurine.create(test.childs.figurine.d)
+//this.childs.figurine.create(test.childs.figurine.d)
 
 
-test.childs.testWidget.childs.tempMonitor.update({x:new Date(), y:Math.random()})
+this.childs.cameraCcd.childs.tempMonitor.update({x:new Date(), y:Math.random()})
 
 })
 
