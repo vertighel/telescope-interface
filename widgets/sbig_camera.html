@@ -8,6 +8,11 @@ hgroup h4, hgroup h5, header>hgroup,header>div {
 header{
     margin-bottom: 1em;
 }
+
+.image_title{
+    font-size : 1.6em;
+}
+
 </style>
 
 <div>
@@ -35,8 +40,8 @@ header{
     </section>
     
     <figure class="col-md">
+      <figcaption class="image_title">Last image: <span data-var="image_name"></span></figcaption>
       <x-widget name="viewer" data-class="widgets/glscreen" data-fits-file="lib/fits/ngc6934_v.fits"> </x-widget>
-      <figcaption>Last image: <span data-var="image_name"></span></figcaption>
     </figure>
     
   </article>
@@ -182,13 +187,21 @@ class sbig_camera{
 	var cam=this;
 	for(var tpn in template.objects){
 	    let tp=template.objects[tpn];
-	    var widg=
-		(top_widget.childs!==undefined) ?
-		top_widget.childs[tpn] : top_widget;
+	    // var widg=
+	    // 	(top_widget.childs!==undefined) ?
+	    // 	top_widget.childs[tpn] : top_widget;
 
 	    if(tp.objects !== undefined){
-		cam.fill_ob(tp, widg);
+		var widg= top_widget[tpn]!==undefined?top_widget : top_widget.childs[tpn];
+		console.log("Goin depper in child  " + tpn + " W=" + widg);
+		if(widg!==undefined){
+		    console.log("Goin depper in " + widg.name);
+		    cam.fill_ob(tp, widg);
+		}
 	    }else{
+		var widg=top_widget;
+		console.log("Looking for " + tpn ); //+ " in parent " + top_widget.name );
+		console.log( " in widget " + widg.name);
 		if(widg[tpn]!==undefined){
 		    var type=widg[tpn].getAttribute("type");
 		    switch(type){
@@ -314,7 +327,7 @@ sbc.update_button=function(){
 		        // console.log("LOCKING DONE OK! " + JSON.stringify(init_data, null, 10));
 		    }
                     
-		    sbc.monitor_temperature(true);
+		    //sbc.monitor_temperature(true);
 		    sbc.update_button();
 
 		}).catch(function(m){

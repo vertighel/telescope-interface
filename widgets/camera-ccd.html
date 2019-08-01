@@ -1,5 +1,10 @@
 <style>
-  
+
+.tmonitor{
+    width: 100%; 
+    height: auto;
+}
+
 </style>
 
 <x-ids> x0 y0 xf yf</x-ids>
@@ -20,12 +25,16 @@
           <span class="input-group-text">°C</span>
       </div>
     </div>
-
-    <div class="col-3">
-    <x-widget name="tempMonitor"  data-var="tempMonitor" data-class="temp_monitor"></x-widget>
-    </div>
+    
   </div>
-
+  
+  <div class="mb-2 row">
+    <img class="col-12 tmonitor">
+      <x-widget name="tempMonitor"  data-var="tempMonitor" data-class="temp_monitor"></x-widget>
+    </img>
+    
+  </div>
+  
   <div class="mb-2 row">
     <label class="col-2 col-form-label">Info</label>
     <small class="form-text text-muted">
@@ -99,7 +108,9 @@
 
   var cam_ccd=this;
   
-console.log(cam_ccd)
+  //console.log(cam_ccd)
+
+  var subframe_data=[];
 
   $(document).ready(function(){
 
@@ -107,26 +118,28 @@ console.log(cam_ccd)
 	  var ifCustom=this.value == "custom";
 	  cam_ccd.subframe.style.display=ifCustom ? "block":"none";
 	  $("#x0,#y0,#xf,#yf").prop("disabled",!ifCustom)
-          if(ifCustom){
-              var subframe =[cam_ccd.x_init.value,
-                             cam_ccd.x_final.value,
-                             cam_ccd.y_init.value,
-                             cam_ccd.y_final.value]
-          }
 
-          cam_ccd.get_params=function(){
-	      return {
-	          cooling : { enabled : $(cam_ccd.cooling_enabled).prop("checked"),
-                              setpoint :$(cam_ccd.cooling_setpoint).prop("value")
-                            },
-	          subframe : subframe
-	      }
-          }
-
-	  console.log("P="+JSON.stringify(cam_ccd.get_params()));
+	  if(ifCustom){
+	      subframe_data =[cam_ccd.x_init.value,
+			      cam_ccd.x_final.value,
+			      cam_ccd.y_init.value,
+			      cam_ccd.y_final.value];
+	  }else
+	      subframe_data=[];
+	  
+	  
+	  //console.log("P="+JSON.stringify(cam_ccd.get_params()));
       });
-
-
+      
+      cam_ccd.get_params=function(){
+	  return {
+	      cooling : { enabled : $(cam_ccd.cooling_enabled).prop("checked"),
+			  setpoint :$(cam_ccd.cooling_setpoint).prop("value")
+			},
+	      subframe : subframe_data
+	  }
+      }
+      
       cam_ccd.set_params=function(pars){
 	  if(pars.cooling!==undefined){
 	      if(pars.cooling.enabled !== undefined)
@@ -148,12 +161,13 @@ console.log(cam_ccd)
       cam_ccd.cooling_enabled.addEventListener("change", function(){
 	  var cam=cam_ccd.parent.cam;
 	  cam.sock.query("sbig/set_cooling_info",
-                         { cam_id : cam.info.id,
-                           cooling_info : cam_ccd.get_params().cooling
-                         },
-                         function(rep_data){
-	                     cam_ccd.parent.debug.newline("reply received "  + JSON.stringify(rep_data));
-	                 });
+			 {
+			     cam_id : cam.info.id,
+			     cooling_info : cam_ccd.get_params().cooling
+			 },
+			 function(rep_data){
+			     cam_ccd.parent.debug.newline("reply received "  + JSON.stringify(rep_data));
+			 });
 	  console.log(cam_ccd.get_params());
       });
 

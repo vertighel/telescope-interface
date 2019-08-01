@@ -46,7 +46,7 @@ var sock=sm.new_socket({
     mod_pack : sbig_handlers,
     mod_pack_name : "sbig",
 //    port: 8888,
-    path: "ws2"
+    path: "ws"
 });
 
 sb.childs.ws.attach_client(sock);
@@ -167,8 +167,14 @@ sock.mods.install_mod({
 			    });
 			
 			// console.log(cool)
-			// cam.childs.temp_monitor.update_temp(cool);
-		        cam.childs.temp_monitor.update_temp({x: new Date(), y: cool.ccd_temp});
+			var tempMonitor=cam.childs.ccd_settings.childs.tempMonitor;
+			//or you can find it using the find_widget function :
+
+			tempMonitor=cam.find_widget("tempMonitor");
+			    
+			tempMonitor.update({x: new Date(), y: cool.ccd_temp});
+			
+			
 		    }
 		}
 	    }
