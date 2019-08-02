@@ -13,10 +13,10 @@
     <div data-var="expo_status" class="expo_status" style="display:none;"></div>
     <div  id="mode-group" data-var="mode_group" class="btn-group btn-group-toggle col" data-toggle="buttons">
       <label class="btn btn-warning btn-sm active">
-	<input type="radio" name="options" value="exposure" autocomplete="off" checked> Exposure
+	<input data-var="radio_expo" type="radio" name="options" value="exposure" autocomplete="off" checked> Exposure
       </label>
       <label class="btn btn-warning btn-sm">
-	<input type="radio" name="options" value="monitor" autocomplete="off"> Monitor
+	<input data-var="radio_monitor" type="radio" name="options" value="monitor" autocomplete="off"> Monitor
       </label>
     </div>
   </div>
@@ -99,7 +99,15 @@
       cc.abort.disabled=false;
       
       var mgroup=$("label.active input").get(0).innerHTML;
-      var sel_mode = $("input:radio:checked").val();
+
+      //CA marche pas!!, ca prend le radio des filtres !! :)
+      var sel_mode; // = $("input:radio:checked").val();
+
+      if(cc.radio_expo.checked)
+	  sel_mode="exposure";
+      else
+	  sel_mode="monitor";
+
       console.log("Sel mode "+sel_mode + " mgrp " + mgroup);
       cam.fill_ob(cam.ob_template, sbc);
       cam.ob_template.TOTOmode="Hello";
