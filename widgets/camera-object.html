@@ -4,7 +4,7 @@
   <div class="mb-2 row">
     <label for="imagetyp" class="col-form-label col-2">Type</label>
     <div class="col input-group">
-      <select data-var="imagetype" id="imagetyp" name="imagetyp" class="form-control">
+      <select data-var="imagetyp" id="imagetyp" name="imagetyp" class="form-control">
         <option value="science">Science</option>
         <option value="flat">Flat</option>
         <option value="dark">Dark</option>
@@ -71,23 +71,23 @@
  
  var filters=[
      {
-	 id : 0,
+	 id : 1,
 	 name : "U"
      },
      {
-	 id : 0,
+	 id : 2,
 	 name : "B"
      },
      {
-	 id : 0,
+	 id : 3,
 	 name : "V"
      },
      {
-	 id : 0,
+	 id : 4,
 	 name : "R"
      },
      {
-	 id : 0,
+	 id : 5,
 	 name : "I"
      }
 
@@ -127,7 +127,7 @@
      return checked;
  }
  
- co.imagetype.addEventListener("change",function(){
+ co.imagetyp.addEventListener("change",function(){
      console.log("change");
      var ifBias = (this.value == "bias");
      var ifDark = (this.value == "dark");
@@ -148,7 +148,7 @@
  
  /* co.get_params=function(){
   *     return {
-    imagetype : co.imagetype.value,
+    imagetyp : co.imagetype.value,
     exptime : co.exptime.value,
     nexpo : co.nexpo.value,
     filter : co.selected_filter,
